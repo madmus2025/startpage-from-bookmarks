@@ -1,0 +1,13 @@
+* text=auto
+
+# Windows-Skripte mit CRLF
+*.cmd  text eol=crlf
+*.ps1  text eol=crlf
+
+# Mac-Skripte zwingend mit LF (sonst startet bash nicht)
+*.command text eol=lf
+*.js      text eol=lf
+*.py      text eol=lf
+
+*.png binary
+*.zip binary

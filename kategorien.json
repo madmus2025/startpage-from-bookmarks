@@ -1,0 +1,104 @@
+{
+  "titel": "Startseite",
+  "titel_en": "Start Page",
+  "suche": { "name": "Google", "url": "https://www.google.com/search?q=" },
+  "favicons": "direkt",
+  "schnellzugriffMax": 16,
+  "eintraegeProKarte": 10,
+  "mindestOrdnerGroesse": 3,
+  "sonstiges": { "name": "Sonstiges", "name_en": "Other", "icon": "🗂️" },
+  "ignorieren": ["support.mozilla.org", "mozilla.org", "microsoftedgewelcome.microsoft.com", "go.microsoft.com"],
+
+  "kategorien": [
+    {
+      "name": "Intranet & Firma", "name_en": "Intranet & Company",
+      "icon": "🏢",
+      "domains": [],
+      "stichworte": ["intranet", "firma", "personal", "zeiterfassung", "urlaub", "company", "employee", "timesheet", "vacation"]
+    },
+    {
+      "name": "Office & Zusammenarbeit", "name_en": "Office & Collaboration",
+      "icon": "📎",
+      "domains": ["office.com", "office365.com", "microsoft365.com", "sharepoint.com", "onedrive.live.com", "teams.microsoft.com", "teams.live.com", "outlook.office.com", "outlook.office365.com", "docs.google.com", "drive.google.com", "sheets.google.com", "slides.google.com", "calendar.google.com", "meet.google.com", "notion.so", "notion.site", "atlassian.net", "atlassian.com", "trello.com", "asana.com", "monday.com", "clickup.com", "miro.com", "slack.com", "zoom.us", "webex.com", "dropbox.com", "box.com", "nextcloud.com", "airtable.com", "basecamp.com", "loom.com", "calendly.com", "doodle.com", "typeform.com", "forms.office.com", "planner.cloud.microsoft", "m365.cloud.microsoft"],
+      "stichworte": ["office", "teams", "sharepoint", "kalender", "projekt", "meeting", "ticket", "calendar", "project"]
+    },
+    {
+      "name": "E-Mail & Kommunikation", "name_en": "Email & Messaging",
+      "icon": "✉️",
+      "domains": ["mail.google.com", "gmail.com", "outlook.live.com", "web.de", "gmx.net", "gmx.de", "posteo.de", "mailbox.org", "t-online.de/email", "web.whatsapp.com", "whatsapp.com", "telegram.org", "web.telegram.org", "signal.org", "discord.com", "proton.me"],
+      "stichworte": ["webmail", "e-mail", "email", "postfach", "mail", "inbox"]
+    },
+    {
+      "name": "KI-Tools", "name_en": "AI Tools",
+      "icon": "✨",
+      "domains": ["chatgpt.com", "chat.openai.com", "openai.com", "platform.openai.com", "claude.ai", "anthropic.com", "console.anthropic.com", "gemini.google.com", "aistudio.google.com", "notebooklm.google.com", "perplexity.ai", "huggingface.co", "midjourney.com", "copilot.microsoft.com", "mistral.ai", "chat.mistral.ai", "elevenlabs.io", "runwayml.com", "leonardo.ai", "suno.com", "heygen.com", "synthesia.io", "ideogram.ai", "krea.ai", "poe.com", "replicate.com", "lovable.dev", "v0.dev", "bolt.new", "cursor.com", "neuroflash.com", "langdock.com"],
+      "stichworte": ["ki", "ai", "gpt", "llm", "prompt"]
+    },
+    {
+      "name": "Entwicklung & IT", "name_en": "Development & IT",
+      "icon": "💻",
+      "domains": ["github.com", "gist.github.com", "gitlab.com", "bitbucket.org", "stackoverflow.com", "stackexchange.com", "superuser.com", "serverfault.com", "npmjs.com", "developer.mozilla.org", "w3schools.com", "php.net", "python.org", "pypi.org", "docker.com", "hub.docker.com", "aws.amazon.com", "console.aws.amazon.com", "portal.azure.com", "azure.microsoft.com", "learn.microsoft.com", "cloud.google.com", "console.cloud.google.com", "vercel.com", "netlify.com", "cloudflare.com", "dash.cloudflare.com", "digitalocean.com", "hetzner.com", "hetzner.de", "ionos.de", "strato.de", "all-inkl.com", "netcup.de", "localhost", "127.0.0.1", "codepen.io", "jsfiddle.net", "regex101.com", "caniuse.com", "wordpress.org", "developer.wordpress.org", "laravel.com", "reactjs.org", "react.dev", "vuejs.org", "nodejs.org", "tailwindcss.com", "getbootstrap.com", "jquery.com", "phpmyadmin.net", "apachefriends.org", "jetbrains.com", "code.visualstudio.com", "postman.com", "sentry.io", "uptimerobot.com", "status.cloud.google.com", "webpagetest.org", "pagespeed.web.dev", "validator.w3.org", "jsonlint.com", "dns.google", "mxtoolbox.com", "ssllabs.com"],
+      "stichworte": ["server", "hosting", "api", "admin", "backend", "dev", "staging", "dokumentation", "docs", "wordpress", "datenbank", "deploy"]
+    },
+    {
+      "name": "Design & Medien", "name_en": "Design & Media",
+      "icon": "🎨",
+      "domains": ["figma.com", "adobe.com", "creativecloud.adobe.com", "express.adobe.com", "behance.net", "dribbble.com", "canva.com", "unsplash.com", "pexels.com", "pixabay.com", "fonts.google.com", "fontawesome.com", "fontsquirrel.com", "coolors.co", "color.adobe.com", "shutterstock.com", "istockphoto.com", "gettyimages.de", "gettyimages.com", "stock.adobe.com", "envato.com", "elements.envato.com", "freepik.com", "flaticon.com", "affinity.serif.com", "lottiefiles.com", "remove.bg", "photopea.com", "spline.design", "framer.com", "webflow.com", "iconify.design", "heroicons.com", "lucide.dev", "awwwards.com", "pinterest.com", "pinterest.de"],
+      "stichworte": ["design", "grafik", "foto", "bilder", "schrift", "font", "logo", "icon", "farbe", "mockup", "inspiration", "photo", "image", "color", "colour"]
+    },
+    {
+      "name": "Marketing & SEO", "name_en": "Marketing & SEO",
+      "icon": "📈",
+      "domains": ["analytics.google.com", "search.google.com", "ads.google.com", "tagmanager.google.com", "business.google.com", "business.facebook.com", "adsmanager.facebook.com", "ads.linkedin.com", "ads.tiktok.com", "semrush.com", "ahrefs.com", "sistrix.de", "sistrix.com", "mailchimp.com", "cleverreach.com", "hubspot.com", "app.hubspot.com", "hootsuite.com", "buffer.com", "later.com", "matomo.org", "brevo.com", "sendinblue.com", "rapidmail.de", "metricool.com", "lookerstudio.google.com", "datastudio.google.com", "trends.google.com", "answerthepublic.com", "ryte.com", "screamingfrog.co.uk", "similarweb.com", "klaviyo.com", "activecampaign.com", "salesforce.com", "pipedrive.com"],
+      "stichworte": ["marketing", "seo", "sea", "kampagne", "newsletter", "analytics", "crm", "werbung", "social media", "advertising", "campaign"]
+    },
+    {
+      "name": "Social Media", "name_en": "Social Media",
+      "icon": "💬",
+      "domains": ["facebook.com", "instagram.com", "linkedin.com", "xing.com", "twitter.com", "x.com", "tiktok.com", "threads.net", "bsky.app", "mastodon.social", "reddit.com", "snapchat.com"],
+      "stichworte": []
+    },
+    {
+      "name": "Video & Musik", "name_en": "Video & Music",
+      "icon": "🎬",
+      "domains": ["youtube.com", "youtu.be", "studio.youtube.com", "vimeo.com", "twitch.tv", "netflix.com", "spotify.com", "open.spotify.com", "soundcloud.com", "ardmediathek.de", "zdf.de", "arte.tv", "joyn.de", "primevideo.com", "disneyplus.com", "music.apple.com", "deezer.com", "artlist.io", "epidemicsound.com", "audiojungle.net"],
+      "stichworte": ["video", "musik", "podcast", "stream"]
+    },
+    {
+      "name": "News & Wissen", "name_en": "News & Knowledge",
+      "icon": "📰",
+      "domains": ["spiegel.de", "zeit.de", "faz.net", "sueddeutsche.de", "tagesschau.de", "heise.de", "golem.de", "t3n.de", "handelsblatt.com", "welt.de", "n-tv.de", "stern.de", "focus.de", "bild.de", "wiwo.de", "manager-magazin.de", "netzpolitik.org", "theverge.com", "techcrunch.com", "wired.com", "arstechnica.com", "news.ycombinator.com", "bbc.com", "bbc.co.uk", "nytimes.com", "theguardian.com", "reuters.com", "wikipedia.org", "de.wikipedia.org", "en.wikipedia.org", "medium.com", "substack.com"],
+      "stichworte": ["news", "nachrichten", "zeitung", "magazin", "blog", "wiki", "magazine"]
+    },
+    {
+      "name": "Lernen", "name_en": "Learning",
+      "icon": "🎓",
+      "domains": ["udemy.com", "coursera.org", "linkedin.com/learning", "skillshare.com", "khanacademy.org", "edx.org", "codecademy.com", "freecodecamp.org", "duolingo.com", "masterclass.com", "domestika.org", "ted.com"],
+      "stichworte": ["kurs", "tutorial", "schulung", "lernen", "webinar", "akademie", "weiterbildung", "course", "training", "learn"]
+    },
+    {
+      "name": "Finanzen & Verwaltung", "name_en": "Finance & Admin",
+      "icon": "💶",
+      "domains": ["paypal.com", "sparkasse.de", "dkb.de", "ing.de", "commerzbank.de", "deutsche-bank.de", "comdirect.de", "n26.com", "postbank.de", "volksbank.de", "datev.de", "lexoffice.de", "lexware.de", "sevdesk.de", "elster.de", "stripe.com", "dashboard.stripe.com", "qonto.com", "finom.co", "kontist.com", "candis.io", "getmyinvoices.com", "fastbill.com", "billomat.com", "easybill.de", "personio.de", "personio.com", "bundesanzeiger.de", "handelsregister.de", "arbeitsagentur.de", "finanzamt.de", "ihk.de"],
+      "stichworte": ["bank", "konto", "rechnung", "buchhaltung", "steuer", "finanz", "lohn", "versicherung", "vertrag", "behörde", "invoice", "accounting", "payroll", "insurance", "banking", "tax"]
+    },
+    {
+      "name": "Tools & Helfer", "name_en": "Tools & Utilities",
+      "icon": "🧰",
+      "domains": ["deepl.com", "translate.google.com", "translate.google.de", "wetransfer.com", "smallpdf.com", "ilovepdf.com", "tinypng.com", "squoosh.app", "bitly.com", "bit.ly", "1password.com", "lastpass.com", "bitwarden.com", "speedtest.net", "fast.com", "wieistmeineip.de", "whatismyipaddress.com", "duden.de", "leo.org", "dict.cc", "linguee.de", "pons.com", "qr-code-generator.com", "cloudconvert.com", "convertio.co", "online-convert.com", "virustotal.com", "haveibeenpwned.com", "timeanddate.de", "timeanddate.com", "zamzar.com", "archive.org", "web.archive.org", "pdf24.org", "tools.pdf24.org", "excalidraw.com", "draw.io", "app.diagrams.net"],
+      "stichworte": ["tool", "generator", "konverter", "converter", "übersetz", "rechner", "pdf", "passwort", "translat", "calculator", "password"]
+    },
+    {
+      "name": "Shopping", "name_en": "Shopping",
+      "icon": "🛒",
+      "domains": ["amazon.de", "amazon.com", "ebay.de", "ebay.com", "otto.de", "zalando.de", "idealo.de", "geizhals.de", "mediamarkt.de", "saturn.de", "conrad.de", "reichelt.de", "etsy.com", "aliexpress.com", "alternate.de", "mindfactory.de", "cyberport.de", "notebooksbilliger.de", "thomann.de", "ikea.com", "lidl.de", "kaufland.de", "galaxus.de", "apple.com/de/shop", "check24.de", "vistaprint.de", "flyeralarm.com", "wir-machen-druck.de", "saxoprint.de"],
+      "stichworte": ["shop", "kaufen", "bestellung", "angebot", "druckerei", "store", "buy", "order"]
+    },
+    {
+      "name": "Reisen & Karten", "name_en": "Travel & Maps",
+      "icon": "🧭",
+      "domains": ["bahn.de", "int.bahn.de", "booking.com", "airbnb.de", "airbnb.com", "lufthansa.com", "eurowings.com", "flixbus.de", "hrs.de", "trivago.de", "skyscanner.de", "google.com/maps", "google.de/maps", "maps.google.com", "maps.google.de", "openstreetmap.org", "maps.apple.com", "here.com", "adac.de", "wetter.com", "wetter.de", "dwd.de", "windy.com"],
+      "stichworte": ["reise", "hotel", "flug", "karte", "wetter", "route", "travel", "flight", "weather", "map"]
+    }
+  ]
+}

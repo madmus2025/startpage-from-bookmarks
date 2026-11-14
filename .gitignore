@@ -1,0 +1,14 @@
+# Erzeugte Seiten / generated pages
+index.html
+demo.html
+protokoll.txt
+
+# Mac-Paket wird als Release-Download veröffentlicht / Mac package is published as a release asset
+*.zip
+
+# Lokale Werkzeug-Einstellungen / local tooling
+.claude/
+.vscode/
+Thumbs.db
+.DS_Store
+desktop.ini

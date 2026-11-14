@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITEL__</title>
+<base target="_blank">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%235b6cff'/%3E%3Cpath d='M20 18h24a2 2 0 0 1 2 2v28l-14-8-14 8V20a2 2 0 0 1 2-2z' fill='white'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#f4f5f9; --glow1:rgba(91,108,255,.10); --glow2:rgba(236,72,153,.06);
+  --surface:#ffffff; --surface-2:#f1f3f8; --border:rgba(15,23,42,.08); --border-strong:rgba(15,23,42,.14);
+  --text:#151925; --muted:#5d6477; --faint:#9aa1b3;
+  --accent:#4f5fe8; --ring:rgba(79,95,232,.30);
+  --shadow:0 1px 2px rgba(15,23,42,.04), 0 8px 24px -12px rgba(15,23,42,.12);
+  --l:46%; --s:62%; --plate:#f1f3f8; --danger:#cf3a3a; --danger-bg:rgba(207,58,58,.10); --toast-bg:#1b1f2b; --toast-fg:#fff; --toast-btn:rgba(255,255,255,.14); --star:#d99a00; --star-bg:rgba(217,154,0,.12);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b0d13; --glow1:rgba(99,112,255,.16); --glow2:rgba(236,72,153,.08);
+    --surface:rgba(255,255,255,.035); --surface-2:rgba(255,255,255,.07); --border:rgba(255,255,255,.07); --border-strong:rgba(255,255,255,.14);
+    --text:#e8eaf2; --muted:#8c93a8; --faint:#5c6378;
+    --accent:#8e9cff; --ring:rgba(142,156,255,.35);
+    --shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 12px 32px -16px rgba(0,0,0,.7);
+    --l:68%; --s:70%; --plate:rgba(255,255,255,.92); --danger:#ff8080; --danger-bg:rgba(255,128,128,.14); --toast-bg:#e9ebf2; --toast-fg:#12151e; --toast-btn:rgba(0,0,0,.08); --star:#ffc93c; --star-bg:rgba(255,201,60,.14);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b0d13; --glow1:rgba(99,112,255,.16); --glow2:rgba(236,72,153,.08);
+  --surface:rgba(255,255,255,.035); --surface-2:rgba(255,255,255,.07); --border:rgba(255,255,255,.07); --border-strong:rgba(255,255,255,.14);
+  --text:#e8eaf2; --muted:#8c93a8; --faint:#5c6378;
+  --accent:#8e9cff; --ring:rgba(142,156,255,.35);
+  --shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 12px 32px -16px rgba(0,0,0,.7);
+  --l:68%; --s:70%; --plate:rgba(255,255,255,.92); --danger:#ff8080; --danger-bg:rgba(255,128,128,.14); --toast-bg:#e9ebf2; --toast-fg:#12151e; --toast-btn:rgba(0,0,0,.08); --star:#ffc93c; --star-bg:rgba(255,201,60,.14);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{
+  margin:0; min-height:100vh; color:var(--text); background:var(--bg);
+  background-image:radial-gradient(900px 500px at 10% -10%, var(--glow1), transparent 60%),
+                   radial-gradient(800px 500px at 100% 0%, var(--glow2), transparent 60%);
+  background-attachment:fixed;
+  font:14px/1.45 "Segoe UI Variable Text","Segoe UI",Inter,system-ui,-apple-system,Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+button{font:inherit;color:inherit}
+.wrap{width:95%;margin:0 auto;padding:16px 0 40px}
+
+/* Kopf */
+.kopf{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"gruss suche rechts" "hint hint hint";align-items:center;column-gap:28px;margin-bottom:14px}
+.gruss{grid-area:gruss;min-width:0}
+.kopf .search{grid-area:suche;margin:0}
+.kopf .right{grid-area:rechts}
+.kopf .hint{grid-area:hint;margin:6px 0 0}
+.greet{font-size:19px;font-weight:650;letter-spacing:-.01em;margin:0;line-height:1.2;white-space:nowrap}
+.date{color:var(--muted);font-size:12px;white-space:nowrap}
+.right{display:flex;align-items:center;gap:12px}
+.clock{font-size:26px;font-weight:300;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1;white-space:nowrap}
+.iconbtn{width:34px;height:34px;border-radius:10px;border:1px solid var(--border);background:var(--surface);cursor:pointer;display:grid;place-items:center;color:var(--muted);transition:.15s}
+.iconbtn:hover{color:var(--text);border-color:var(--border-strong)}
+.iconbtn svg{width:18px;height:18px}
+
+.search{position:relative;margin-bottom:10px}
+.search svg{position:absolute;left:15px;top:50%;width:18px;height:18px;transform:translateY(-50%);color:var(--faint);pointer-events:none}
+.search input{
+  width:100%;height:44px;padding:0 52px 0 46px;border-radius:14px;border:1px solid var(--border);
+  background:var(--surface);color:var(--text);font:inherit;font-size:17px;outline:none;box-shadow:var(--shadow);transition:border-color .15s, box-shadow .15s;
+}
+.search input::placeholder{color:var(--faint)}
+.search input:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--ring), var(--shadow)}
+.search input::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
+.search .clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:32px;height:32px;border:0;border-radius:10px;background:none;color:var(--faint);cursor:pointer;display:grid;place-items:center;transition:background .12s, color .12s}
+.search .clear:hover,.search .clear:focus-visible{background:var(--surface-2);color:var(--text);outline:none}
+.search .clear svg{position:static;transform:none;width:18px;height:18px;color:currentColor;pointer-events:none}
+kbd{font:inherit;font-size:11.5px;padding:2px 7px;border-radius:6px;border:1px solid var(--border-strong);background:var(--surface-2);color:var(--muted)}
+.hint{min-height:18px;color:var(--muted);font-size:12px;padding:0 4px;margin-bottom:12px}
+.hint b{color:var(--text);font-weight:600}
+
+/* Schnellzugriff */
+.quick{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:4px;margin-bottom:12px}
+.tile{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 6px 6px;border-radius:16px;text-decoration:none;color:var(--text);transition:background .15s, transform .15s}
+.tile:hover{background:var(--surface-2);transform:translateY(-2px)}
+.tile .fav{width:44px;height:44px;border-radius:14px;font-size:19px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow)}
+.tile .fav img{inset:10px;width:22px;height:22px}
+.tile span.lbl{font-size:12.5px;max-width:100%;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Themen-Chips */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.chip{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:13px;color:var(--muted);transition:.15s}
+.chip:hover{color:var(--text);border-color:var(--border-strong)}
+.chip .n{font-size:11.5px;color:var(--faint);font-variant-numeric:tabular-nums}
+.chip.on{background:var(--accent);border-color:transparent;color:#fff}
+.chip.on .n{color:rgba(255,255,255,.75)}
+.chip:focus-visible{outline:none;box-shadow:0 0 0 3px var(--ring)}
+
+/* Karten */
+.grid{columns:310px;column-gap:18px}
+.card{
+  break-inside:avoid;margin:0 0 18px;padding:12px 8px 8px;border-radius:20px;
+  background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow);
+  scroll-margin-top:20px;transition:box-shadow .3s;
+}
+.card.flash{box-shadow:0 0 0 3px var(--ring), var(--shadow)}
+.ch{display:flex;align-items:center;gap:10px;padding:0 6px 8px 6px;cursor:pointer;user-select:none;border:0;background:none;width:100%;text-align:left}
+.ci{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;font-size:16px;flex:none;
+    background:hsl(var(--h) var(--s) var(--l) / .14)}
+.ch h2{margin:0;font-size:15px;font-weight:620;letter-spacing:-.01em;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cnt{font-size:12px;color:var(--faint);font-variant-numeric:tabular-nums}
+.chev{width:16px;height:16px;color:var(--faint);transition:transform .2s}
+.card.zu .chev{transform:rotate(-90deg)}
+.card.zu .links,.card.zu .more{display:none}
+.card.zu .ch{padding-bottom:4px}
+
+.link{display:flex;align-items:center;gap:11px;padding:7px 8px;border-radius:12px;text-decoration:none;color:var(--text);min-width:0;transition:background .12s}
+.link:hover,.link:focus-visible{background:var(--surface-2);outline:none}
+.link.best{background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--accent)}
+.row{position:relative}
+.row .link{padding-right:70px}
+.row.x{display:none}
+.card.alle .row.x, body.suche .row.x{display:block}
+.lt{display:flex;flex-direction:column;min-width:0;flex:1}
+.ti{font-size:13.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ho{font-size:11.5px;color:var(--faint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Favorit & Ausblenden */
+.acts{position:absolute;right:6px;top:50%;transform:translateY(-50%);display:flex;gap:2px}
+.act{width:28px;height:28px;border:0;border-radius:8px;background:none;color:var(--faint);cursor:pointer;display:grid;place-items:center;
+     opacity:0;transition:opacity .12s, background .12s, color .12s}
+.act svg{width:15px;height:15px}
+.row:hover .act,.row:focus-within .act,.tw:hover .act,.tw:focus-within .act{opacity:1}
+.act[data-act="hide"]:hover,.act[data-act="hide"]:focus-visible,.act[data-act="unpin"]:hover,.act[data-act="unpin"]:focus-visible{background:var(--danger-bg);color:var(--danger);outline:none}
+.act[data-act="star"]:hover,.act[data-act="star"]:focus-visible{background:var(--star-bg);color:var(--star);outline:none}
+.act.on{opacity:1;color:var(--star)}
+.act.on svg{fill:currentColor}
+.tw{position:relative}
+.tw .act{position:absolute;top:2px;right:2px;width:24px;height:24px;background:var(--bg);box-shadow:0 0 0 1px var(--border)}
+.tw .act svg{width:12px;height:12px}
+@media (hover:none){.act{opacity:.55}}
+
+.hbar{text-align:center;margin-top:6px}
+.linkbtn{border:0;background:none;color:var(--muted);font-size:12.5px;cursor:pointer;padding:6px 12px;border-radius:9px;display:inline-flex;align-items:center;gap:7px}
+.linkbtn:hover{color:var(--text);background:var(--surface-2)}
+.linkbtn svg{width:15px;height:15px}
+
+dialog{border:1px solid var(--border-strong);border-radius:20px;background:var(--bg);color:var(--text);padding:0;
+       width:min(560px,calc(100vw - 32px));max-height:min(660px,calc(100vh - 64px));box-shadow:0 30px 80px -20px rgba(0,0,0,.5)}
+dialog[open]{display:flex;flex-direction:column}
+dialog::backdrop{background:rgba(10,12,20,.45)}
+.dlg-h{padding:20px 22px 6px}
+.dlg-h h2{margin:0;font-size:17px;font-weight:650}
+.dlg-h p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.dlg-b{overflow:auto;padding:8px 12px;flex:1}
+.drow{display:flex;align-items:center;gap:11px;padding:7px 8px;border-radius:12px}
+.drow:hover{background:var(--surface-2)}
+.drow a{display:flex;align-items:center;gap:11px;min-width:0;flex:1;text-decoration:none;color:var(--text)}
+.dlg-f{display:flex;justify-content:space-between;gap:8px;padding:12px 18px;border-top:1px solid var(--border)}
+.btn{height:34px;padding:0 14px;border-radius:10px;border:1px solid var(--border-strong);background:var(--surface);color:var(--text);cursor:pointer;font-size:13px;font-weight:550;flex:none}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:#fff;border-color:transparent}
+.btn.small{height:28px;padding:0 10px;font-size:12.5px}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px);opacity:0;pointer-events:none;display:flex;align-items:center;gap:14px;
+       padding:9px 10px 9px 16px;border-radius:14px;background:var(--toast-bg);color:var(--toast-fg);box-shadow:0 14px 36px -10px rgba(0,0,0,.45);
+       font-size:13.5px;transition:opacity .2s, transform .2s;max-width:calc(100vw - 32px);z-index:10}
+.toast.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.toast span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.toast button{border:0;background:var(--toast-btn);color:inherit;font:inherit;font-weight:650;padding:6px 11px;border-radius:9px;cursor:pointer;flex:none}
+
+.fav{position:relative;flex:none;width:28px;height:28px;border-radius:8px;display:grid;place-items:center;overflow:hidden;
+     font-weight:650;font-size:13px;color:hsl(var(--h) var(--s) calc(var(--l) - 4%));background:hsl(var(--h) var(--s) var(--l) / .15)}
+.fav img{position:absolute;inset:6px;width:16px;height:16px;object-fit:contain}
+.fav.ok{background:var(--plate)}
+.fav.ok > span{visibility:hidden}
+.tile .fav.ok{background:var(--plate)}
+
+.more{display:block;width:calc(100% - 8px);margin:4px 4px 0;padding:7px;border:0;border-radius:10px;background:none;color:var(--accent);font-size:12.5px;font-weight:550;cursor:pointer;text-align:left;padding-left:47px}
+.more:hover{background:var(--surface-2)}
+body.suche .more, body.suche .quick{display:none}
+/* Gefilterte Themen komplett zeigen (auch eingeklappte und "+ N weitere") */
+body.gefiltert .row.x, body.gefiltert .card.zu .links{display:block}
+body.gefiltert .more{display:none}
+body.gefiltert .card.zu .chev{transform:none}
+
+.leer{padding:60px 20px;text-align:center;color:var(--muted)}
+.leer b{display:block;font-size:18px;color:var(--text);margin-bottom:6px}
+footer{margin-top:28px;color:var(--faint);font-size:12px;text-align:center;line-height:1.7}
+
+@media (max-width:640px){
+  .wrap{width:auto;padding:14px 16px 32px}
+  .kopf{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"gruss rechts" "suche suche" "hint hint";row-gap:10px}
+  .kopf .hint{margin-top:0}
+  .clock{font-size:22px}
+  .search input{height:46px;font-size:16px}
+  .grid{columns:1}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="kopf">
+    <div class="gruss">
+      <h1 class="greet" id="greet">Hallo</h1>
+      <div class="date" id="date"></div>
+    </div>
+    <div class="right">
+      <div class="clock" id="clock"></div>
+      <button class="iconbtn" id="theme" type="button" title="Darstellung"></button>
+    </div>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="Lesezeichen durchsuchen oder im Web suchen – einfach lostippen" aria-label="Suche">
+      <button class="clear" id="clear" type="button" title="Suche leeren (Esc)" aria-label="Suche leeren" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <div class="hint" id="hint"></div>
+  </header>
+  <section class="quick" id="quick" aria-label="Schnellzugriff"></section>
+  <nav class="chips" id="chips" aria-label="Themen"></nav>
+  <main class="grid" id="grid"></main>
+  <div class="hbar" id="hbar" hidden><button class="linkbtn" id="hbtn" type="button"></button></div>
+  <footer id="foot"></footer>
+</div>
+
+<dialog id="dlg" aria-labelledby="dlg-t">
+  <div class="dlg-h"><h2 id="dlg-t">Ausgeblendete Lesezeichen</h2><p id="dlg-p">Diese Links werden auf der Startseite nicht angezeigt. In den Browsern sind sie weiterhin vorhanden.</p></div>
+  <div class="dlg-b" id="dlg-b"></div>
+  <div class="dlg-f"><button class="btn" id="dlg-all" type="button">Alle einblenden</button><button class="btn primary" id="dlg-x" type="button">Schließen</button></div>
+</dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-t"></span><button id="toast-u" type="button">Rückgängig</button></div>
+
+<script>
+const DATA = /*__DATEN__*/null;
+(() => {
+  const D = DATA || { titel: 'Startseite', kategorien: [], schnell: [], quellen: [], gesamt: 0, dubletten: 0, suche: { name: 'Google', url: 'https://www.google.com/search?q=' } };
+  const LIMIT = D.eintraegeProKarte || 10;
+  const SUCHE = D.suche || { name: 'Google', url: 'https://www.google.com/search?q=' };
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem('startseite.' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem('startseite.' + k, JSON.stringify(v)); } catch (e) { } }
+  };
+  /* ---------- Sprache: Deutsch für de-*, sonst Englisch (US); ?lang=de|en erzwingt ---------- */
+  const LANG = (() => {
+    try { const p = new URLSearchParams(location.search).get('lang'); if (p === 'de' || p === 'en') return p; } catch (e) { }
+    const l = (navigator.languages && navigator.languages[0]) || navigator.language || 'en';
+    return /^de\b/i.test(l) ? 'de' : 'en';
+  })();
+  const LOCALE = LANG === 'de' ? 'de-DE' : 'en-US';
+  const T = {
+    de: {
+      gruss: ['Gute Nacht', 'Guten Morgen', 'Guten Tag', 'Guten Abend'],
+      darstellung: 'Darstellung', themes: { auto: 'Automatisch', light: 'Hell', dark: 'Dunkel' },
+      platzhalter: 'Lesezeichen durchsuchen oder im Web suchen – einfach lostippen', suche: 'Suche',
+      leeren: 'Suche leeren (Esc)', leerenAria: 'Suche leeren', schnellzugriff: 'Schnellzugriff', themen: 'Themen',
+      ordner: 'Ordner: ', aus: 'Aus: ',
+      hinzu: t => `„${t}“ zum Schnellzugriff hinzugefügt`, entfernt: t => `„${t}“ aus dem Schnellzugriff entfernt`, versteckt: t => `„${t}“ ausgeblendet`,
+      rueck: 'Rückgängig',
+      unpin: 'Aus dem Schnellzugriff entfernen', unpinAria: t => `${t} aus dem Schnellzugriff entfernen`,
+      starAn: 'In den Schnellzugriff (oben)', starAnAria: t => `${t} zum Schnellzugriff hinzufügen`,
+      hide: 'Ausblenden (Entf)', hideAria: t => `${t} ausblenden`,
+      keine: '<b>Keine Lesezeichen gefunden</b>Sobald in Chrome, Edge, Firefox, Safari &amp; Co. Lesezeichen angelegt sind, erscheinen sie hier nach der nächsten Aktualisierung.',
+      alleVersteckt: '<b>Alle Lesezeichen sind ausgeblendet</b>Über „Ausgeblendete verwalten“ lassen sie sich wieder einblenden.',
+      weniger: 'Weniger anzeigen', mehr: n => `+ ${n} weitere`,
+      alle: 'Alle', alleTitel: 'Alle Themen anzeigen', themaTitel: 'Nur dieses Thema anzeigen – weitere zum Kombinieren anklicken',
+      verwalten: n => `${n} ausgeblendete${n === 1 ? 's' : ''} Lesezeichen verwalten`,
+      dlgTitel: 'Ausgeblendete Lesezeichen', dlgText: 'Diese Links werden auf der Startseite nicht angezeigt. In den Browsern sind sie weiterhin vorhanden.',
+      dlgAlle: 'Alle einblenden', dlgZu: 'Schließen', dlgLeer: 'Keine ausgeblendeten Lesezeichen.', einblenden: 'Einblenden',
+      hintFilter: (a, b, n) => `Filter: <b>${a} von ${b} Themen</b> · ${n} Lesezeichen · Tippen sucht nur darin`,
+      hintStart: (n, k) => `${n} Lesezeichen in ${k} Themen · Tippen zum Filtern, <kbd>Enter</kbd> öffnet den besten Treffer`,
+      hintTreffer: (n, f, t, s) => `${n} Treffer${f ? ' im Filter' : ''} · <kbd>Enter</kbd> öffnet <b>${t}</b> · <kbd>Strg</kbd>+<kbd>Enter</kbd> sucht bei ${s}`,
+      hintNichts: (s, q) => `Keine Lesezeichen gefunden · <kbd>Enter</kbd> sucht bei ${s} nach <b>${q}</b>`,
+      fuss: (stand, n, d, q) => `Stand ${stand} · ${n} Lesezeichen${d ? ` · ${d} Dubletten zusammengeführt` : ''}<br>${q ? 'Quellen: ' + q + '<br>' : ''}Wird automatisch aus den Browser-Lesezeichen neu aufgebaut. ☆ legt einen Link in den Schnellzugriff, × blendet ihn aus – beides wirkt nur auf dieser Startseite.`
+    },
+    en: {
+      gruss: ['Good night', 'Good morning', 'Good afternoon', 'Good evening'],
+      darstellung: 'Appearance', themes: { auto: 'Automatic', light: 'Light', dark: 'Dark' },
+      platzhalter: 'Search bookmarks or the web – just start typing', suche: 'Search',
+      leeren: 'Clear search (Esc)', leerenAria: 'Clear search', schnellzugriff: 'Quick access', themen: 'Topics',
+      ordner: 'Folder: ', aus: 'From: ',
+      hinzu: t => `“${t}” added to quick access`, entfernt: t => `“${t}” removed from quick access`, versteckt: t => `“${t}” hidden`,
+      rueck: 'Undo',
+      unpin: 'Remove from quick access', unpinAria: t => `Remove ${t} from quick access`,
+      starAn: 'Add to quick access (top row)', starAnAria: t => `Add ${t} to quick access`,
+      hide: 'Hide (Del)', hideAria: t => `Hide ${t}`,
+      keine: '<b>No bookmarks found</b>As soon as there are bookmarks in Chrome, Edge, Firefox, Safari &amp; co., they will show up here after the next refresh.',
+      alleVersteckt: '<b>All bookmarks are hidden</b>Use “Manage hidden bookmarks” to show them again.',
+      weniger: 'Show less', mehr: n => `+ ${n} more`,
+      alle: 'All', alleTitel: 'Show all topics', themaTitel: 'Show only this topic – click more to combine',
+      verwalten: n => `Manage ${n} hidden bookmark${n === 1 ? '' : 's'}`,
+      dlgTitel: 'Hidden bookmarks', dlgText: 'These links are not shown on the start page. They still exist in your browsers.',
+      dlgAlle: 'Show all', dlgZu: 'Close', dlgLeer: 'No hidden bookmarks.', einblenden: 'Show',
+      hintFilter: (a, b, n) => `Filter: <b>${a} of ${b} topics</b> · ${n} bookmarks · typing searches only these`,
+      hintStart: (n, k) => `${n} bookmarks in ${k} topics · Type to filter, <kbd>Enter</kbd> opens the best match`,
+      hintTreffer: (n, f, t, s) => `${n} match${n === 1 ? '' : 'es'}${f ? ' in filter' : ''} · <kbd>Enter</kbd> opens <b>${t}</b> · <kbd>Ctrl</kbd>+<kbd>Enter</kbd> searches ${s}`,
+      hintNichts: (s, q) => `No bookmarks found · <kbd>Enter</kbd> searches ${s} for <b>${q}</b>`,
+      fuss: (stand, n, d, q) => `Updated ${stand} · ${n} bookmarks${d ? ` · ${d} duplicates merged` : ''}<br>${q ? 'Sources: ' + q + '<br>' : ''}Rebuilt automatically from your browser bookmarks. ☆ pins a link to quick access, × hides it – both only affect this start page.`
+    }
+  }[LANG];
+  const kName = k => (LANG === 'en' && k.name_en) || k.name;   // angezeigter Themenname (Schlüssel bleibt k.name)
+  document.documentElement.lang = LANG === 'de' ? 'de' : 'en-US';
+  $('#q').placeholder = T.platzhalter; $('#q').setAttribute('aria-label', T.suche);
+  $('#clear').title = T.leeren; $('#clear').setAttribute('aria-label', T.leerenAria);
+  $('#quick').setAttribute('aria-label', T.schnellzugriff); $('#chips').setAttribute('aria-label', T.themen);
+  $('#dlg-t').textContent = T.dlgTitel; $('#dlg-p').textContent = T.dlgText;
+  $('#dlg-all').textContent = T.dlgAlle; $('#dlg-x').textContent = T.dlgZu; $('#toast-u').textContent = T.rueck;
+
+  const hue = s => { let h = 7; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
+  const ICON_X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+  const ICON_EYE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M9.9 5.1A9.8 9.8 0 0 1 12 5c5 0 9 4.5 10 7a13 13 0 0 1-2.6 3.6M6.6 6.6C4.4 8 2.8 10.1 2 12c1 2.5 5 7 10 7 1.7 0 3.3-.5 4.6-1.3"/></svg>';
+  const ICON_CHEV = '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+
+  /* ---------- Darstellung ---------- */
+  const themeIcons = {
+    auto: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg>',
+    light: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+    dark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>'
+  };
+  const themeNames = T.themes;
+  let theme = store.get('theme', 'auto');
+  function applyTheme() {
+    if (theme === 'auto') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', theme);
+    const b = $('#theme'); b.innerHTML = themeIcons[theme]; b.title = T.darstellung + ': ' + themeNames[theme] + (theme === 'auto' ? ' (' + themeNames[systemTheme()] + ')' : '');
+  }
+  // Jeder Klick wechselt sichtbar zwischen Hell und Dunkel; entspricht das Ergebnis dem System, folgt die Seite wieder automatisch
+  const systemTheme = () => (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  $('#theme').addEventListener('click', () => {
+    const jetzt = theme === 'auto' ? systemTheme() : theme;
+    const neu = jetzt === 'dark' ? 'light' : 'dark';
+    theme = neu === systemTheme() ? 'auto' : neu;
+    store.set('theme', theme); applyTheme();
+  });
+  if (window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+  applyTheme();
+
+  /* ---------- Uhr & Begrüßung ---------- */
+  function tick() {
+    const n = new Date(), h = n.getHours();
+    $('#greet').textContent = T.gruss[h < 5 || h >= 22 ? 0 : h < 11 ? 1 : h < 17 ? 2 : 3];
+    $('#clock').textContent = n.toLocaleTimeString(LOCALE, { hour: '2-digit', minute: '2-digit' });
+    $('#date').textContent = n.toLocaleDateString(LOCALE, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  tick(); setInterval(tick, 10000);
+
+  /* ---------- Favicons ---------- */
+  function favUrl(u) {
+    try {
+      const x = new URL(u);
+      if (D.favicons === 'aus') return '';
+      if (D.favicons === 'duckduckgo') return 'https://icons.duckduckgo.com/ip3/' + x.hostname + '.ico';
+      if (D.favicons === 'google') return 'https://www.google.com/s2/favicons?sz=64&domain=' + x.hostname;
+      return x.origin + '/favicon.ico';
+    } catch (e) { return ''; }
+  }
+  function fav(it) {
+    const letter = ((it.t || it.h || '?').replace(/^[^\p{L}\p{N}]+/u, '')[0] || '?').toUpperCase();
+    const src = favUrl(it.u);
+    return `<span class="fav" style="--h:${hue(it.h)}"><span>${esc(letter)}</span>${src ? `<img loading="lazy" alt="" referrerpolicy="no-referrer" src="${esc(src)}" onload="if(this.naturalWidth>1)this.parentNode.classList.add('ok');else this.remove()" onerror="this.remove()">` : ''}</span>`;
+  }
+  const tip = it => [it.u, it.o ? T.ordner + it.o : '', it.b && it.b.length ? T.aus + it.b.join(', ') : ''].filter(Boolean).join('\n');
+
+  /* ---------- Ausgeblendete Links (pro Rechner im Browser gespeichert) ---------- */
+  // Schlüssel ohne Protokoll, www und abschließenden Slash – übersteht das Neuaufbauen der Seite
+  const keyOf = u => String(u).toLowerCase().replace(/^https?:\/\/(www\.)?/, '').replace(/\/+(?=$|[?#])/, '');
+  const ITEMS = new Map();                                // Schlüssel → Lesezeichen
+  for (const k of D.kategorien) for (const it of k.items) { it.k = keyOf(it.u); if (!ITEMS.has(it.k)) ITEMS.set(it.k, it); }
+  for (const it of D.schnell || []) { it.k = keyOf(it.u); if (!ITEMS.has(it.k)) ITEMS.set(it.k, it); }
+  const knapp = it => ({ k: it.k, t: it.t, u: it.u, h: it.h });
+
+  let versteckt = store.get('versteckt', []);            // ausgeblendet: [{k, t, u, h}]
+  let favoriten = store.get('favoriten', []);            // eigene Favoriten: [{k, t, u, h}]
+  let ausLeiste = new Set(store.get('ausLeiste', []));   // aus der Lesezeichenleiste stammende, aber entfernte Kacheln
+  const leisteKeys = new Set((D.schnell || []).map(it => it.k));
+  const speichern = () => { store.set('versteckt', versteckt); store.set('favoriten', favoriten); store.set('ausLeiste', [...ausLeiste]); };
+  const finde = k => ITEMS.get(k) || favoriten.find(f => f.k === k) || versteckt.find(v => v.k === k);
+
+  // Kacheln oben: Lesezeichenleiste + eigene Favoriten, ohne entfernte und ausgeblendete
+  function obenListe() {
+    const vs = new Set(versteckt.map(v => v.k));
+    const liste = (D.schnell || []).filter(it => !ausLeiste.has(it.k));
+    for (const f of favoriten) if (!liste.some(it => it.k === f.k)) liste.push(ITEMS.get(f.k) || f);
+    return liste.filter(it => !vs.has(it.k));
+  }
+  const istOben = k => obenListe().some(it => it.k === k);
+
+  function nachOben(it, still) {
+    ausLeiste.delete(it.k);
+    if (!leisteKeys.has(it.k) && !favoriten.some(f => f.k === it.k)) favoriten.push(knapp(it));
+    speichern(); render();
+    if (!still) toast(T.hinzu(it.t), () => vonOben(it, true));
+  }
+  function vonOben(it, still) {
+    favoriten = favoriten.filter(f => f.k !== it.k);
+    if (leisteKeys.has(it.k)) ausLeiste.add(it.k);
+    speichern(); render();
+    if (!still) toast(T.entfernt(it.t), () => nachOben(it, true));
+  }
+  function ausblenden(it) {
+    if (!versteckt.some(v => v.k === it.k)) versteckt.push(knapp(it));
+    speichern(); render();
+    toast(T.versteckt(it.t), () => einblenden([it.k]));
+  }
+  function einblenden(keys) {
+    const ks = new Set(keys);
+    versteckt = versteckt.filter(v => !ks.has(v.k)); speichern(); render();
+  }
+
+  let toastTimer = null, toastUndo = null;
+  function toast(text, undo) {
+    $('#toast-t').textContent = text; toastUndo = undo;
+    $('#toast').classList.add('on');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { $('#toast').classList.remove('on'); toastUndo = null; }, 6000);
+  }
+  $('#toast-u').addEventListener('click', () => {
+    if (toastUndo) toastUndo(); toastUndo = null;
+    $('#toast').classList.remove('on'); clearTimeout(toastTimer);
+  });
+
+  /* ---------- Aufbau ---------- */
+  const quick = $('#quick'), grid = $('#grid'), chips = $('#chips');
+  const zu = new Set(store.get('zu', []));
+  const aktiv = new Set(store.get('filter', []));        // gefilterte Themen (gemerkt)
+  const offen = new Set(store.get('offen', []));         // Themen mit "alle anzeigen" (gemerkt)
+  let rows = [], cards = [];
+  const ICON_STAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9z"/></svg>';
+
+  function render() {
+    const vs = new Set(versteckt.map(v => v.k));
+    const show = it => !vs.has(it.k);
+
+    const oben = obenListe();
+    const obenKeys = new Set(oben.map(it => it.k));
+    quick.innerHTML = oben.map(it =>
+      `<div class="tw"><a class="tile" href="${esc(it.u)}" target="_blank" rel="noopener noreferrer" title="${esc(tip(it))}">${fav(it)}<span class="lbl">${esc(it.t)}</span></a>` +
+      `<button class="act" data-act="unpin" type="button" data-k="${esc(it.k)}" title="${esc(T.unpin)}" aria-label="${esc(T.unpinAria(it.t))}">${ICON_X}</button></div>`).join('');
+    quick.hidden = !oben.length;
+
+    const kats = D.kategorien.map((k, i) => ({ k, i, items: k.items.filter(show) })).filter(x => x.items.length);
+    if (!D.kategorien.length) {
+      grid.innerHTML = `<div class="leer">${T.keine}</div>`;
+    } else if (!kats.length) {
+      grid.innerHTML = `<div class="leer">${T.alleVersteckt}</div>`;
+    } else {
+      grid.innerHTML = kats.map(({ k, i, items }) => {
+        const links = items.map((it, j) => {
+          const s = (it.t + ' ' + it.h + ' ' + (it.o || '') + ' ' + k.name + ' ' + (k.name_en || '')).toLowerCase();
+          const on = obenKeys.has(it.k);
+          return `<div class="row${j >= LIMIT ? ' x' : ''}" data-s="${esc(s)}"><a class="link" href="${esc(it.u)}" target="_blank" rel="noopener noreferrer" title="${esc(tip(it))}" data-k="${esc(it.k)}" data-t="${esc(it.t.toLowerCase())}" data-h="${esc(it.h)}">${fav(it)}<span class="lt"><span class="ti">${esc(it.t)}</span><span class="ho">${esc(it.h)}</span></span></a>` +
+            `<span class="acts"><button class="act${on ? ' on' : ''}" data-act="star" type="button" data-k="${esc(it.k)}" aria-pressed="${on}" title="${esc(on ? T.unpin : T.starAn)}" aria-label="${esc(on ? T.unpinAria(it.t) : T.starAnAria(it.t))}">${ICON_STAR}</button>` +
+            `<button class="act" data-act="hide" type="button" data-k="${esc(it.k)}" title="${esc(T.hide)}" aria-label="${esc(T.hideAria(it.t))}">${ICON_X}</button></span></div>`;
+        }).join('');
+        const rest = items.length - LIMIT, alle = offen.has(k.name);
+        const more = rest > 0 ? `<button class="more" type="button" data-n="${rest}">${alle ? T.weniger : T.mehr(rest)}</button>` : '';
+        return `<section class="card${zu.has(k.name) ? ' zu' : ''}${alle ? ' alle' : ''}" id="k${i}" data-name="${esc(k.name)}" style="--h:${hue(k.name)}">
+          <button class="ch" type="button" aria-expanded="${!zu.has(k.name)}"><span class="ci">${esc(k.icon || '•')}</span><h2>${esc(kName(k))}</h2><span class="cnt">${items.length}</span>${ICON_CHEV}</button>
+          <div class="links">${links}</div>${more}</section>`;
+      }).join('');
+    }
+    for (const name of [...aktiv]) if (!kats.some(x => x.k.name === name)) aktiv.delete(name);
+    chips.innerHTML = `<button class="chip" type="button" data-alle title="${esc(T.alleTitel)}">${esc(T.alle)}<span class="n">${kats.reduce((s, x) => s + x.items.length, 0)}</span></button>` +
+      kats.map(({ k, items }) =>
+        `<button class="chip" type="button" data-name="${esc(k.name)}" title="${esc(T.themaTitel)}"><span>${esc(k.icon || '')}</span>${esc(kName(k))}<span class="n">${items.length}</span></button>`).join('');
+    chips.hidden = !kats.length;
+    chipsAktualisieren();
+
+    rows = [...grid.querySelectorAll('.row')];
+    cards = [...grid.querySelectorAll('.card')];
+    sichtbar = D.gesamt - versteckt.filter(v => ITEMS.has(v.k)).length;
+    $('#hbar').hidden = !versteckt.length;
+    $('#hbtn').innerHTML = ICON_EYE + esc(T.verwalten(versteckt.length));
+    if ($('#dlg').open) renderDialog();
+    filter();
+  }
+  let sichtbar = D.gesamt;
+
+  /* ---------- Klicks ---------- */
+  document.addEventListener('click', e => {
+    const b = e.target.closest('.act');
+    if (!b) return;
+    e.preventDefault();
+    const it = finde(b.dataset.k); if (!it) return;
+    if (b.dataset.act === 'hide') ausblenden(it);
+    else if (b.dataset.act === 'unpin') vonOben(it);
+    else if (b.dataset.act === 'star') istOben(it.k) ? vonOben(it) : nachOben(it);
+  });
+  grid.addEventListener('click', e => {
+    const head = e.target.closest('.ch');
+    if (head) {
+      const card = head.parentNode, name = card.dataset.name;
+      card.classList.toggle('zu');
+      const isZu = card.classList.contains('zu');
+      head.setAttribute('aria-expanded', !isZu);
+      isZu ? zu.add(name) : zu.delete(name); store.set('zu', [...zu]);
+      return;
+    }
+    const more = e.target.closest('.more');
+    if (more) {
+      const card = more.parentNode, name = card.dataset.name;
+      card.classList.toggle('alle');
+      const alle = card.classList.contains('alle');
+      alle ? offen.add(name) : offen.delete(name); store.set('offen', [...offen]);
+      more.textContent = alle ? T.weniger : T.mehr(more.dataset.n);
+    }
+  });
+  // Themen-Filter: Klick schaltet ein Thema ein/aus, mehrere kombinierbar, "Alle" setzt zurück (wird gemerkt)
+  function chipsAktualisieren() {
+    for (const c of chips.querySelectorAll('.chip')) {
+      const on = c.hasAttribute('data-alle') ? !aktiv.size : aktiv.has(c.dataset.name);
+      c.classList.toggle('on', on); c.setAttribute('aria-pressed', on);
+    }
+    document.body.classList.toggle('gefiltert', aktiv.size > 0);
+  }
+  chips.addEventListener('click', e => {
+    const c = e.target.closest('.chip'); if (!c) return;
+    if (c.hasAttribute('data-alle')) aktiv.clear();
+    else aktiv.has(c.dataset.name) ? aktiv.delete(c.dataset.name) : aktiv.add(c.dataset.name);
+    store.set('filter', [...aktiv]); chipsAktualisieren(); filter();
+    if (grid.getBoundingClientRect().top < 0) chips.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  /* ---------- Verwaltung ausgeblendeter Links ---------- */
+  const dlg = $('#dlg');
+  function renderDialog() {
+    if (!versteckt.length) { $('#dlg-b').innerHTML = `<div class="leer" style="padding:30px 10px">${esc(T.dlgLeer)}</div>`; return; }
+    $('#dlg-b').innerHTML = [...versteckt].sort((a, b) => a.t.localeCompare(b.t, LANG)).map(v =>
+      `<div class="drow"><a href="${esc(v.u)}" target="_blank" rel="noopener noreferrer" title="${esc(v.u)}">${fav(v)}<span class="lt"><span class="ti">${esc(v.t)}</span><span class="ho">${esc(v.h)}</span></span></a>` +
+      `<button class="btn small" type="button" data-k="${esc(v.k)}">${esc(T.einblenden)}</button></div>`).join('');
+  }
+  $('#hbtn').addEventListener('click', () => { renderDialog(); dlg.showModal(); });
+  $('#dlg-x').addEventListener('click', () => dlg.close());
+  $('#dlg-all').addEventListener('click', () => { einblenden(versteckt.map(v => v.k)); dlg.close(); });
+  $('#dlg-b').addEventListener('click', e => { const b = e.target.closest('button[data-k]'); if (b) einblenden([b.dataset.k]); });
+  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+
+  /* ---------- Suche ---------- */
+  const q = $('#q'), hint = $('#hint');
+  let best = null;
+  function score(a, terms) {
+    const t = a.dataset.t, h = a.dataset.h; let s = 0;
+    for (const w of terms) s += t.startsWith(w) ? 5 : h.startsWith(w) ? 4 : t.includes(' ' + w) ? 3 : t.includes(w) ? 2 : 1;
+    return s;
+  }
+  function filter() {
+    const v = q.value.trim().toLowerCase();
+    const terms = v.split(/\s+/).filter(Boolean);
+    document.body.classList.toggle('suche', terms.length > 0);
+    $('#clear').hidden = !q.value;
+    if (best) best.classList.remove('best'); best = null;
+    const themaOk = c => !aktiv.size || aktiv.has(c.dataset.name);
+    if (!terms.length) {
+      rows.forEach(r => r.hidden = false); cards.forEach(c => c.hidden = !themaOk(c));
+      if (aktiv.size) {
+        const vis = cards.filter(c => !c.hidden), n = vis.reduce((s, c) => s + c.querySelectorAll('.row').length, 0);
+        hint.innerHTML = T.hintFilter(vis.length, cards.length, n);
+      } else {
+        hint.innerHTML = sichtbar ? T.hintStart(sichtbar, cards.length) : '';
+      }
+      return;
+    }
+    let n = 0, bestScore = -1;
+    for (const r of rows) {
+      const ok = themaOk(r.closest('.card')) && terms.every(w => r.dataset.s.includes(w));
+      r.hidden = !ok;
+      if (ok) { n++; const a = r.firstElementChild, sc = score(a, terms); if (sc > bestScore) { bestScore = sc; best = a; } }
+    }
+    cards.forEach(c => c.hidden = !c.querySelector('.row:not([hidden])'));
+    if (best) {
+      best.classList.add('best');
+      hint.innerHTML = T.hintTreffer(n, aktiv.size > 0, esc(best.querySelector('.ti').textContent), esc(SUCHE.name));
+    } else {
+      hint.innerHTML = T.hintNichts(esc(SUCHE.name), esc(q.value.trim()));
+    }
+  }
+  const clear = $('#clear');
+  const leeren = () => { q.value = ''; filter(); q.focus(); };
+  q.addEventListener('input', filter);
+  clear.addEventListener('click', leeren);
+  q.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const v = q.value.trim(); if (!v) return;
+      if (best && !e.ctrlKey && !e.metaKey) window.open(best.href, '_blank', 'noopener');
+      else window.open(SUCHE.url + encodeURIComponent(v), '_blank', 'noopener');
+    } else if (e.key === 'Escape') { e.preventDefault(); leeren(); }
+    else if (e.key === 'ArrowDown' && best) { e.preventDefault(); best.focus(); }
+  });
+  const sichtbareLinks = () => [...grid.querySelectorAll('.link')].filter(a => a.offsetParent);
+  document.addEventListener('keydown', e => {
+    if (dlg.open || e.target === q || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.key === '/') { e.preventDefault(); q.focus(); return; }
+    const link = e.target.closest && e.target.closest('.link');
+    if (link && (e.key === 'Delete' || e.key === 'Backspace')) {
+      e.preventDefault();
+      const vis = sichtbareLinks(), i = vis.indexOf(link);
+      const naechster = vis[i + 1] || vis[i - 1];
+      const nk = naechster && naechster.dataset.k;
+      ausblenden(finde(link.dataset.k));
+      const ziel = nk && [...grid.querySelectorAll('.link')].find(a => a.dataset.k === nk);
+      ziel ? ziel.focus() : q.focus();
+      return;
+    }
+    if (link && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+      const vis = sichtbareLinks(), i = vis.indexOf(link);
+      e.preventDefault(); const t = vis[i + (e.key === 'ArrowDown' ? 1 : -1)]; t ? t.focus() : q.focus();
+      return;
+    }
+    if (e.key.length === 1 && /\S/.test(e.key) && !(e.target.closest && e.target.closest('button'))) q.focus();
+  });
+
+  render();
+
+  /* ---------- Fußzeile ---------- */
+  if (D.erstellt) {
+    const stand = new Date(D.erstellt).toLocaleString(LOCALE, { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    const quellen = (D.quellen || []).map(s => `${esc(s.name)} (${s.anzahl})`).join(' · ');
+    $('#foot').innerHTML = T.fuss(esc(stand), D.gesamt, D.dubletten, quellen);
+  }
+  document.title = (LANG === 'en' && D.titel_en) || D.titel || (LANG === 'en' ? 'Start Page' : 'Startseite');
+  if (!matchMedia('(max-width:640px)').matches) q.focus();
+})();
+</script>
+</body>
+</html>
