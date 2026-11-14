@@ -294,6 +294,11 @@ function Test-Domain($Eintrag, [string]$Regel) {
 }
 
 function Get-Kategorie($Eintrag) {
+    # 0. Firmenlink mit festem Thema (Name oder englischer Name eines Themas, sonst eigenes Thema)
+    if ($Eintrag.Thema) {
+        foreach ($k in $Konfig.kategorien) { if ($Eintrag.Thema -eq $k.name -or $Eintrag.Thema -eq $k.name_en) { return $k.name } }
+        return "ordner:$($Eintrag.Thema)"
+    }
     # 1. Domain-Regeln – die genaueste (längste) passende Regel gewinnt
     $beste = $null; $besteLaenge = 0
     foreach ($k in $Konfig.kategorien) {
@@ -336,6 +341,12 @@ function New-Startseite {
 
     Write-Host ''
     Write-Host 'Lesezeichen werden gesammelt …' -ForegroundColor Cyan
+    # Firmenlinks aus kategorien.json stehen bei allen Mitarbeitern auf der Seite (zuerst, damit sie im Schnellzugriff vorn liegen)
+    $firmenlinks = @($Konfig.firmenlinks | Where-Object { $_ -and $_.url -match '^https?://' })
+    $Firma = @(foreach ($f in $firmenlinks) {
+        [pscustomobject]@{ Titel = "$($f.titel)".Trim(); Url = "$($f.url)".Trim(); Ordner = ''; Top = ''
+                           Leiste = [bool]$f.schnellzugriff; Quelle = ''; Firma = $true; Thema = "$($f.thema)".Trim() }
+    })
     if ($Demo) {
         Read-Demo
     } else {
@@ -353,7 +364,10 @@ function New-Startseite {
     # --- Dubletten zusammenführen -------------------------------------------
     $map = [ordered]@{}
     $ignoriert = 0
-    foreach ($b in $Alle) {
+    $eingang = New-Object System.Collections.Generic.List[object]
+    foreach ($f in $Firma) { $eingang.Add($f) }
+    foreach ($f in $Alle) { $eingang.Add($f) }
+    foreach ($b in $eingang) {
         $u = $null
         if (-not [Uri]::TryCreate($b.Url, [UriKind]::Absolute, [ref]$u)) { continue }
         $hostName = $u.Host.ToLowerInvariant() -replace '^www\.', ''
@@ -377,19 +391,21 @@ function New-Startseite {
             if (-not $x.Titel -and $titelOk) { $x.Titel = $b.Titel }
             if (-not $x.Top -and $b.Top) { $x.Top = $b.Top; $x.Ordner = $b.Ordner }
             if ($b.Leiste) { $x.Leiste = $true }
-            if ($x.Browser -notcontains $browser) { $x.Browser.Add($browser) }
+            if ($b.Firma) { $x.Firma = $true; $x.Thema = $b.Thema; if ($titelOk) { $x.Titel = $b.Titel } }
+            elseif ($x.Browser -notcontains $browser) { $x.Browser.Add($browser) }
         } else {
-            $liste = New-Object System.Collections.Generic.List[string]; $liste.Add($browser)
+            $liste = New-Object System.Collections.Generic.List[string]; if (-not $b.Firma) { $liste.Add($browser) }
             $map[$schluessel] = [pscustomobject]@{
                 Titel = $(if ($titelOk) { $b.Titel } else { '' })
                 Url = $b.Url; HostName = $hostName; HostPfad = $e.HostPfad
                 Ordner = $b.Ordner; Top = $b.Top; Leiste = $b.Leiste; Browser = $liste
+                Firma = [bool]$b.Firma; Thema = $(if ($b.Firma) { $b.Thema } else { '' })
             }
         }
     }
     $eintraege = @($map.Values)
     foreach ($x in $eintraege) { if (-not $x.Titel) { $x.Titel = $x.HostName } }
-    $dubletten = $Alle.Count - $ignoriert - $eintraege.Count
+    $dubletten = $Firma.Count + $Alle.Count - $ignoriert - $eintraege.Count
 
     # --- Thematisch gliedern ---------------------------------------------------
     $gruppen = @{}
@@ -401,7 +417,7 @@ function New-Startseite {
     # Zu kleine Ordner werden aufgelöst: Einträge per Stichwort zuordnen, sonst "Sonstiges"
     $min = [int]$Konfig.mindestOrdnerGroesse; if ($min -lt 1) { $min = 3 }
     foreach ($k in @($gruppen.Keys | Where-Object { $_ -like 'ordner:*' })) {
-        if ($gruppen[$k].Count -ge $min) { continue }
+        if ($gruppen[$k].Count -ge $min -or @($gruppen[$k] | Where-Object { $_.Firma }).Count) { continue }
         foreach ($x in $gruppen[$k]) {
             $neu = Find-Stichwort ('{0} {1}' -f $x.Titel, $x.HostName)
             if (-not $gruppen.ContainsKey($neu)) { $gruppen[$neu] = New-Object System.Collections.Generic.List[object] }
@@ -411,7 +427,9 @@ function New-Startseite {
     }
 
     function ConvertTo-Item($x) {
-        [ordered]@{ t = $x.Titel; u = $x.Url; h = $x.HostName; o = $x.Ordner; b = @($x.Browser) }
+        $i = [ordered]@{ t = $x.Titel; u = $x.Url; h = $x.HostName; o = $x.Ordner; b = @($x.Browser) }
+        if ($x.Firma) { $i.f = 1 }
+        $i
     }
     function New-Gruppe([string]$Name, [string]$NameEn, [string]$Icon, $Liste) {
         if (-not $NameEn) { $NameEn = $Name }

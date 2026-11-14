@@ -8,6 +8,7 @@
   "mindestOrdnerGroesse": 3,
   "sonstiges": { "name": "Sonstiges", "name_en": "Other", "icon": "🗂️" },
   "ignorieren": ["support.mozilla.org", "mozilla.org", "microsoftedgewelcome.microsoft.com", "go.microsoft.com"],
+  "firmenlinks": [],
 
   "kategorien": [
     {

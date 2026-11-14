@@ -12,13 +12,15 @@ Windows & macOS, ohne Server, ohne Installation, ohne Cloud.
 - **Alle Browser auf einmal** – Chrome, Edge, Brave, Vivaldi, Chromium, Opera, Opera GX (alle Profile), Firefox (alle Profile) und Safari (macOS).
 - **Dubletten automatisch zusammengeführt** – gleiche Adresse = ein Eintrag, unabhängig von `http`/`https`, `www.`, `/` am Ende, `index.html` oder Tracking-Parametern (`utm_*`, `fbclid`, `gclid` …). Der Tooltip zeigt, aus welchen Browsern ein Link stammt.
 - **Nach Themen gegliedert** – rund 300 bekannte Dienste werden erkannt (Office, KI-Tools, Design, Marketing, Finanzen …), dazu Stichworte und die eigenen Lesezeichen-Ordner. Vollständig anpassbar in `kategorien.json`.
-- **Schnellzugriff** – Links aus der Lesezeichenleiste erscheinen als Kacheln; ☆ legt jeden Link dort ab, × nimmt ihn wieder heraus.
+- **Schnellzugriff** – Links aus der Lesezeichenleiste erscheinen als Kacheln; ☆ legt jeden Link dort ab, × nimmt ihn wieder heraus. <kbd>Alt</kbd>+<kbd>1</kbd>…<kbd>9</kbd> (Mac: <kbd>⌥</kbd>) öffnet die ersten neun Kacheln – bei gedrückter <kbd>Alt</kbd>-Taste zeigen sie ihre Nummer.
+- **Firmenlinks für alle** – die IT trägt Links (Intranet, IT-Ticket, Zeiterfassung …) einmal in `kategorien.json` ein; sie stehen bei jedem Mitarbeiter auf der Seite, auch ohne Lesezeichen.
+- **Lernt mit** – Klicks werden lokal gezählt; häufig genutzte Links rücken in ihrem Thema nach vorn und gewinnen bei der Suche. Alte Klicks verblassen nach einigen Wochen.
 - **Ausblenden** – × oder <kbd>Entf</kbd> blendet einen Link aus (mit *Rückgängig* und einer Liste zum Wiedereinblenden).
 - **Sofortsuche** – einfach lostippen; <kbd>Enter</kbd> öffnet den besten Treffer, <kbd>Strg</kbd>+<kbd>Enter</kbd> sucht im Web.
 - **Themen-Filter** – die Themen-Buttons sind Schalter und lassen sich kombinieren.
 - **Hell / Dunkel / Automatisch**, responsiv, jeder Link öffnet in einem neuen Tab.
 - **Deutsch & Englisch (US)** – richtet sich nach der Browsersprache; das Einrichtungsfenster nach der Systemsprache.
-- **Merkt sich alles** (Favoriten, Ausgeblendetes, Filter, eingeklappte Themen, Darstellung) pro Browser – bleibt beim automatischen Neuaufbau erhalten.
+- **Merkt sich alles** (Favoriten, Ausgeblendetes, Filter, eingeklappte Themen, Darstellung, Nutzung) pro Browser – bleibt beim automatischen Neuaufbau erhalten.
 - **Privat** – alles bleibt auf dem Rechner. Nach außen gehen nur die Favicon-Abrufe, und die lassen sich abschalten.
 
 ## Installation
@@ -75,10 +77,27 @@ Benötigt nur macOS (JavaScript for Automation ist eingebaut).
 Alles Firmenspezifische steht in **`kategorien.json`**:
 
 - `kategorien` – Themen mit `name`, `name_en` (englischer Anzeigename), `icon` (Emoji), `domains` (z. B. `"sharepoint.com"`, auch mit Pfad wie `"linkedin.com/learning"`) und `stichworte`. Reihenfolge = Reihenfolge auf der Seite. Tipp: interne Domains (z. B. `"intranet.example.com"`) bei *Intranet & Firma* eintragen.
+- `firmenlinks` – Links für alle, siehe unten
 - `suche` – Suchmaschine für die Websuche (z. B. `https://duckduckgo.com/?q=`)
 - `favicons` – `"direkt"` (von der jeweiligen Website), `"duckduckgo"`, `"google"` oder `"aus"` (nur Buchstaben-Icons, keine externen Anfragen)
 - `ignorieren` – Domains, die nie angezeigt werden
 - `eintraegeProKarte`, `schnellzugriffMax`, `mindestOrdnerGroesse`, `titel` / `titel_en`
+
+### Firmenlinks
+
+```json
+"firmenlinks": [
+  { "titel": "Intranet",      "url": "https://intranet.example.com", "thema": "Intranet & Firma", "schnellzugriff": true },
+  { "titel": "IT-Ticket",     "url": "https://helpdesk.example.com", "thema": "Intranet & Firma", "schnellzugriff": true },
+  { "titel": "Zeiterfassung", "url": "https://zeit.example.com" }
+]
+```
+
+- `titel`, `url` – Pflicht
+- `thema` – Themenname (`name` oder `name_en`); ein unbekannter Name wird zu einem eigenen Thema; ohne Angabe gelten die normalen Regeln
+- `schnellzugriff` – `true` legt den Link in den Schnellzugriff, vor die eigenen Kacheln (in dieser Reihenfolge – `Alt+1` ist also immer der erste Firmenlink)
+
+Hat ein Mitarbeiter denselben Link als Lesezeichen, werden beide zusammengeführt; der Firmentitel gewinnt. Auf der eigenen Seite lassen sich Firmenlinks trotzdem aus dem Schnellzugriff nehmen oder ausblenden.
 
 Aussehen: `startseite.vorlage.html` (reines HTML/CSS/JS – Platzhalter `/*__DATEN__*/null` nicht entfernen).
 Sprache zum Testen erzwingen: `index.html?lang=en` bzw. `?lang=de`.
@@ -93,7 +112,7 @@ Sprache zum Testen erzwingen: `index.html?lang=en` bzw. `?lang=de`.
 
 ## Was sich die Startseite merkt
 
-Pro Rechner und Browser (lokal im Browser gespeichert, übersteht den Neuaufbau): Themen-Filter · eingeklappte Themen · „+ N weitere“ aufgeklappt · Hell/Dunkel · Favoriten · ausgeblendete Links.
+Pro Rechner und Browser (lokal im Browser gespeichert, übersteht den Neuaufbau): Themen-Filter · eingeklappte Themen · „+ N weitere“ aufgeklappt · Hell/Dunkel · Favoriten · ausgeblendete Links · Klickzähler für „häufig genutzt“.
 Werden die Browserdaten inkl. Website-Daten gelöscht, ist alles wieder auf Standard.
 
 ## Bekannte Grenzen

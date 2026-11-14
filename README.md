@@ -12,13 +12,15 @@ Windows & macOS, no server, no install, no cloud.
 - **All browsers at once** – Chrome, Edge, Brave, Vivaldi, Chromium, Opera, Opera GX (all profiles), Firefox (all profiles) and Safari (macOS).
 - **Duplicates merged automatically** – same address = one entry, regardless of `http`/`https`, `www.`, trailing `/`, `index.html` or tracking parameters (`utm_*`, `fbclid`, `gclid` …). The tooltip shows which browsers a link came from.
 - **Grouped by topic** – ~300 well-known services are recognised (Office, AI tools, design, marketing, finance …), plus keywords and the user's own bookmark folders. Fully configurable in `kategorien.json`.
-- **Quick access** – links from the bookmarks bar appear as tiles; ☆ pins any link there, × removes it.
+- **Quick access** – links from the bookmarks bar appear as tiles; ☆ pins any link there, × removes it. <kbd>Alt</kbd>+<kbd>1</kbd>…<kbd>9</kbd> (Mac: <kbd>⌥</kbd>) opens the first nine tiles – hold <kbd>Alt</kbd> to see their numbers.
+- **Company links for everyone** – IT adds links (intranet, helpdesk, time tracking …) once in `kategorien.json`; they appear on every employee's page, even without a bookmark.
+- **Learns what you use** – clicks are counted locally; links you use often move to the top of their topic and win in search. Old clicks fade out after a few weeks.
 - **Hide links** – × or <kbd>Del</kbd> hides a link from the page (with *Undo* and a list to restore them).
 - **Instant search** – just start typing; <kbd>Enter</kbd> opens the best match, <kbd>Ctrl</kbd>+<kbd>Enter</kbd> searches the web.
 - **Topic filter** – topic buttons act as toggles and can be combined.
 - **Light / dark / automatic**, responsive, every link opens in a new tab.
 - **German & English (US)** – follows the browser language; the setup dialog follows the system language.
-- **Remembers your choices** (pins, hidden links, filter, collapsed topics, theme) per browser – they survive the automatic rebuild.
+- **Remembers your choices** (pins, hidden links, filter, collapsed topics, theme, usage) per browser – they survive the automatic rebuild.
 - **Private** – everything stays on the computer. The only outbound requests are favicons, which can be switched off.
 
 ## Installation
@@ -75,10 +77,27 @@ Requires nothing but macOS (JavaScript for Automation is built in).
 Everything company-specific lives in **`kategorien.json`**:
 
 - `kategorien` – topics with `name`, `name_en` (English display name), `icon` (emoji), `domains` (e.g. `"sharepoint.com"`, also with a path like `"linkedin.com/learning"`) and `stichworte` (keywords). Order = order on the page. Tip: add internal domains (e.g. `"intranet.example.com"`) to *Intranet & Company*.
+- `firmenlinks` – links shown to everyone, see below
 - `suche` – web search engine (e.g. `https://duckduckgo.com/?q=`)
 - `favicons` – `"direkt"` (loaded from each site), `"duckduckgo"`, `"google"` or `"aus"` (letter icons only, no outbound requests)
 - `ignorieren` – domains that are never shown
 - `eintraegeProKarte`, `schnellzugriffMax`, `mindestOrdnerGroesse`, `titel` / `titel_en`
+
+### Company links
+
+```json
+"firmenlinks": [
+  { "titel": "Intranet",  "url": "https://intranet.example.com", "thema": "Intranet & Firma", "schnellzugriff": true },
+  { "titel": "IT helpdesk", "url": "https://helpdesk.example.com", "thema": "Intranet & Firma", "schnellzugriff": true },
+  { "titel": "Time tracking", "url": "https://time.example.com" }
+]
+```
+
+- `titel`, `url` – required
+- `thema` – topic name (German `name` or `name_en`); an unknown name creates its own topic; without it the normal rules apply
+- `schnellzugriff` – `true` puts the link in quick access, ahead of the user's own tiles (in this order, so `Alt+1` is always the first company link)
+
+If an employee has the same link as a bookmark, both are merged; the company title wins. Employees can still unpin or hide company links on their own page.
 
 Look & feel: `startseite.vorlage.html` (plain HTML/CSS/JS – keep the placeholder `/*__DATEN__*/null`).
 Force a language for testing: `index.html?lang=en` or `?lang=de`.

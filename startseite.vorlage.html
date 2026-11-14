@@ -138,6 +138,8 @@ kbd{font:inherit;font-size:11.5px;padding:2px 7px;border-radius:6px;border:1px s
 .act.on{opacity:1;color:var(--star)}
 .act.on svg{fill:currentColor}
 .tw{position:relative}
+.tw .nr{position:absolute;top:2px;left:2px;min-width:20px;height:20px;padding:0 5px;border-radius:7px;background:var(--accent);color:#fff;font:600 11.5px/20px system-ui,sans-serif;text-align:center;opacity:0;transform:scale(.8);transition:opacity .12s, transform .12s;pointer-events:none}
+body.alt .tw .nr{opacity:1;transform:none}
 .tw .act{position:absolute;top:2px;right:2px;width:24px;height:24px;background:var(--bg);box-shadow:0 0 0 1px var(--border)}
 .tw .act svg{width:12px;height:12px}
 @media (hover:none){.act{opacity:.55}}
@@ -251,13 +253,15 @@ const DATA = /*__DATEN__*/null;
     return /^de\b/i.test(l) ? 'de' : 'en';
   })();
   const LOCALE = LANG === 'de' ? 'de-DE' : 'en-US';
+  const MAC = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+  const ALT = MAC ? '⌥' : 'Alt';
   const T = {
     de: {
       gruss: ['Gute Nacht', 'Guten Morgen', 'Guten Tag', 'Guten Abend'],
       darstellung: 'Darstellung', themes: { auto: 'Automatisch', light: 'Hell', dark: 'Dunkel' },
       platzhalter: 'Lesezeichen durchsuchen oder im Web suchen – einfach lostippen', suche: 'Suche',
       leeren: 'Suche leeren (Esc)', leerenAria: 'Suche leeren', schnellzugriff: 'Schnellzugriff', themen: 'Themen',
-      ordner: 'Ordner: ', aus: 'Aus: ',
+      ordner: 'Ordner: ', aus: 'Aus: ', firma: 'Firmenlink', taste: n => `${ALT}+${n} öffnet diesen Link`,
       hinzu: t => `„${t}“ zum Schnellzugriff hinzugefügt`, entfernt: t => `„${t}“ aus dem Schnellzugriff entfernt`, versteckt: t => `„${t}“ ausgeblendet`,
       rueck: 'Rückgängig',
       unpin: 'Aus dem Schnellzugriff entfernen', unpinAria: t => `${t} aus dem Schnellzugriff entfernen`,
@@ -274,14 +278,14 @@ const DATA = /*__DATEN__*/null;
       hintStart: (n, k) => `${n} Lesezeichen in ${k} Themen · Tippen zum Filtern, <kbd>Enter</kbd> öffnet den besten Treffer`,
       hintTreffer: (n, f, t, s) => `${n} Treffer${f ? ' im Filter' : ''} · <kbd>Enter</kbd> öffnet <b>${t}</b> · <kbd>Strg</kbd>+<kbd>Enter</kbd> sucht bei ${s}`,
       hintNichts: (s, q) => `Keine Lesezeichen gefunden · <kbd>Enter</kbd> sucht bei ${s} nach <b>${q}</b>`,
-      fuss: (stand, n, d, q) => `Stand ${stand} · ${n} Lesezeichen${d ? ` · ${d} Dubletten zusammengeführt` : ''}<br>${q ? 'Quellen: ' + q + '<br>' : ''}Wird automatisch aus den Browser-Lesezeichen neu aufgebaut. ☆ legt einen Link in den Schnellzugriff, × blendet ihn aus – beides wirkt nur auf dieser Startseite.`
+      fuss: (stand, n, d, q) => `Stand ${stand} · ${n} Lesezeichen${d ? ` · ${d} Dubletten zusammengeführt` : ''}<br>${q ? 'Quellen: ' + q + '<br>' : ''}Wird automatisch aus den Browser-Lesezeichen neu aufgebaut. ☆ legt einen Link in den Schnellzugriff, × blendet ihn aus – beides wirkt nur auf dieser Startseite. <kbd>${ALT}</kbd>+<kbd>1</kbd>…<kbd>9</kbd> öffnet die Kacheln oben; häufig genutzte Links rücken nach vorn.`
     },
     en: {
       gruss: ['Good night', 'Good morning', 'Good afternoon', 'Good evening'],
       darstellung: 'Appearance', themes: { auto: 'Automatic', light: 'Light', dark: 'Dark' },
       platzhalter: 'Search bookmarks or the web – just start typing', suche: 'Search',
       leeren: 'Clear search (Esc)', leerenAria: 'Clear search', schnellzugriff: 'Quick access', themen: 'Topics',
-      ordner: 'Folder: ', aus: 'From: ',
+      ordner: 'Folder: ', aus: 'From: ', firma: 'Company link', taste: n => `${ALT}+${n} opens this link`,
       hinzu: t => `“${t}” added to quick access`, entfernt: t => `“${t}” removed from quick access`, versteckt: t => `“${t}” hidden`,
       rueck: 'Undo',
       unpin: 'Remove from quick access', unpinAria: t => `Remove ${t} from quick access`,
@@ -298,7 +302,7 @@ const DATA = /*__DATEN__*/null;
       hintStart: (n, k) => `${n} bookmarks in ${k} topics · Type to filter, <kbd>Enter</kbd> opens the best match`,
       hintTreffer: (n, f, t, s) => `${n} match${n === 1 ? '' : 'es'}${f ? ' in filter' : ''} · <kbd>Enter</kbd> opens <b>${t}</b> · <kbd>Ctrl</kbd>+<kbd>Enter</kbd> searches ${s}`,
       hintNichts: (s, q) => `No bookmarks found · <kbd>Enter</kbd> searches ${s} for <b>${q}</b>`,
-      fuss: (stand, n, d, q) => `Updated ${stand} · ${n} bookmarks${d ? ` · ${d} duplicates merged` : ''}<br>${q ? 'Sources: ' + q + '<br>' : ''}Rebuilt automatically from your browser bookmarks. ☆ pins a link to quick access, × hides it – both only affect this start page.`
+      fuss: (stand, n, d, q) => `Updated ${stand} · ${n} bookmarks${d ? ` · ${d} duplicates merged` : ''}<br>${q ? 'Sources: ' + q + '<br>' : ''}Rebuilt automatically from your browser bookmarks. ☆ pins a link to quick access, × hides it – both only affect this start page. <kbd>${ALT}</kbd>+<kbd>1</kbd>…<kbd>9</kbd> opens the tiles at the top; links you use often move up.`
     }
   }[LANG];
   const kName = k => (LANG === 'en' && k.name_en) || k.name;   // angezeigter Themenname (Schlüssel bleibt k.name)
@@ -362,7 +366,7 @@ const DATA = /*__DATEN__*/null;
     const src = favUrl(it.u);
     return `<span class="fav" style="--h:${hue(it.h)}"><span>${esc(letter)}</span>${src ? `<img loading="lazy" alt="" referrerpolicy="no-referrer" src="${esc(src)}" onload="if(this.naturalWidth>1)this.parentNode.classList.add('ok');else this.remove()" onerror="this.remove()">` : ''}</span>`;
   }
-  const tip = it => [it.u, it.o ? T.ordner + it.o : '', it.b && it.b.length ? T.aus + it.b.join(', ') : ''].filter(Boolean).join('\n');
+  const tip = (it, nr) => [it.u, it.f ? T.firma : '', it.o ? T.ordner + it.o : '', it.b && it.b.length ? T.aus + it.b.join(', ') : '', nr ? T.taste(nr) : ''].filter(Boolean).join('\n');
 
   /* ---------- Ausgeblendete Links (pro Rechner im Browser gespeichert) ---------- */
   // Schlüssel ohne Protokoll, www und abschließenden Slash – übersteht das Neuaufbauen der Seite
@@ -371,6 +375,21 @@ const DATA = /*__DATEN__*/null;
   for (const k of D.kategorien) for (const it of k.items) { it.k = keyOf(it.u); if (!ITEMS.has(it.k)) ITEMS.set(it.k, it); }
   for (const it of D.schnell || []) { it.k = keyOf(it.u); if (!ITEMS.has(it.k)) ITEMS.set(it.k, it); }
   const knapp = it => ({ k: it.k, t: it.t, u: it.u, h: it.h });
+
+  /* ---------- Nutzung: zählt Klicks lokal mit, häufig Genutztes rückt nach vorn ---------- */
+  // nutzung: { Schlüssel: [Gewicht, Tag des letzten Klicks] } – ältere Klicks zählen weniger (Halbwertszeit 30 Tage)
+  const HEUTE = Math.floor(Date.now() / 864e5);
+  let nutzung = store.get('nutzung', {});
+  if (!nutzung || typeof nutzung !== 'object' || Array.isArray(nutzung)) nutzung = {};
+  const gewicht = k => { const n = nutzung[k]; return n ? n[0] * Math.pow(0.5, Math.max(0, HEUTE - n[1]) / 30) : 0; };
+  function benutzt(k) {
+    if (!k) return;
+    nutzung[k] = [gewicht(k) + 1, HEUTE];
+    const ks = Object.keys(nutzung);
+    if (ks.length > 400) { ks.sort((a, b) => gewicht(a) - gewicht(b)); for (const x of ks.slice(0, ks.length - 300)) delete nutzung[x]; }
+    store.set('nutzung', nutzung);
+  }
+  const HAEUFIG = 2;   // ab diesem Gewicht steht ein Link in seiner Karte vorn
 
   let versteckt = store.get('versteckt', []);            // ausgeblendet: [{k, t, u, h}]
   let favoriten = store.get('favoriten', []);            // eigene Favoriten: [{k, t, u, h}]
@@ -436,12 +455,17 @@ const DATA = /*__DATEN__*/null;
 
     const oben = obenListe();
     const obenKeys = new Set(oben.map(it => it.k));
-    quick.innerHTML = oben.map(it =>
-      `<div class="tw"><a class="tile" href="${esc(it.u)}" target="_blank" rel="noopener noreferrer" title="${esc(tip(it))}">${fav(it)}<span class="lbl">${esc(it.t)}</span></a>` +
+    quick.innerHTML = oben.map((it, i) =>
+      `<div class="tw"><a class="tile" href="${esc(it.u)}" target="_blank" rel="noopener noreferrer" title="${esc(tip(it, i < 9 ? i + 1 : 0))}" data-k="${esc(it.k)}">${fav(it)}<span class="lbl">${esc(it.t)}</span></a>` +
+      (i < 9 ? `<span class="nr" aria-hidden="true">${i + 1}</span>` : '') +
       `<button class="act" data-act="unpin" type="button" data-k="${esc(it.k)}" title="${esc(T.unpin)}" aria-label="${esc(T.unpinAria(it.t))}">${ICON_X}</button></div>`).join('');
     quick.hidden = !oben.length;
 
-    const kats = D.kategorien.map((k, i) => ({ k, i, items: k.items.filter(show) })).filter(x => x.items.length);
+    const vorn = items => {   // häufig genutzte Links zuerst, der Rest bleibt alphabetisch
+      const g = new Map(items.map(it => [it.k, gewicht(it.k)]));
+      return items.filter(it => g.get(it.k) >= HAEUFIG).sort((a, b) => g.get(b.k) - g.get(a.k)).concat(items.filter(it => g.get(it.k) < HAEUFIG));
+    };
+    const kats = D.kategorien.map((k, i) => ({ k, i, items: vorn(k.items.filter(show)) })).filter(x => x.items.length);
     if (!D.kategorien.length) {
       grid.innerHTML = `<div class="leer">${T.keine}</div>`;
     } else if (!kats.length) {
@@ -529,7 +553,7 @@ const DATA = /*__DATEN__*/null;
   function renderDialog() {
     if (!versteckt.length) { $('#dlg-b').innerHTML = `<div class="leer" style="padding:30px 10px">${esc(T.dlgLeer)}</div>`; return; }
     $('#dlg-b').innerHTML = [...versteckt].sort((a, b) => a.t.localeCompare(b.t, LANG)).map(v =>
-      `<div class="drow"><a href="${esc(v.u)}" target="_blank" rel="noopener noreferrer" title="${esc(v.u)}">${fav(v)}<span class="lt"><span class="ti">${esc(v.t)}</span><span class="ho">${esc(v.h)}</span></span></a>` +
+      `<div class="drow"><a href="${esc(v.u)}" target="_blank" rel="noopener noreferrer" title="${esc(v.u)}" data-k="${esc(v.k)}">${fav(v)}<span class="lt"><span class="ti">${esc(v.t)}</span><span class="ho">${esc(v.h)}</span></span></a>` +
       `<button class="btn small" type="button" data-k="${esc(v.k)}">${esc(T.einblenden)}</button></div>`).join('');
   }
   $('#hbtn').addEventListener('click', () => { renderDialog(); dlg.showModal(); });
@@ -544,7 +568,7 @@ const DATA = /*__DATEN__*/null;
   function score(a, terms) {
     const t = a.dataset.t, h = a.dataset.h; let s = 0;
     for (const w of terms) s += t.startsWith(w) ? 5 : h.startsWith(w) ? 4 : t.includes(' ' + w) ? 3 : t.includes(w) ? 2 : 1;
-    return s;
+    return s + Math.min(4, Math.log2(1 + gewicht(a.dataset.k)));   // häufig Genutztes gewinnt bei ähnlichem Treffer
   }
   function filter() {
     const v = q.value.trim().toLowerCase();
@@ -585,11 +609,28 @@ const DATA = /*__DATEN__*/null;
     if (e.key === 'Enter') {
       e.preventDefault();
       const v = q.value.trim(); if (!v) return;
-      if (best && !e.ctrlKey && !e.metaKey) window.open(best.href, '_blank', 'noopener');
+      if (best && !e.ctrlKey && !e.metaKey) { benutzt(best.dataset.k); window.open(best.href, '_blank', 'noopener'); }
       else window.open(SUCHE.url + encodeURIComponent(v), '_blank', 'noopener');
     } else if (e.key === 'Escape') { e.preventDefault(); leeren(); }
     else if (e.key === 'ArrowDown' && best) { e.preventDefault(); best.focus(); }
   });
+  // jeder geöffnete Link zählt (Linksklick, Mittelklick, Enter auf einem fokussierten Link)
+  const zaehle = e => { const a = e.target.closest && e.target.closest('a[data-k]'); if (a && (e.type === 'click' || e.button === 1)) benutzt(a.dataset.k); };
+  document.addEventListener('click', zaehle, true);
+  document.addEventListener('auxclick', zaehle, true);
+
+  // Alt+1…9 (Mac: ⌥1…9) öffnet die Kacheln oben; solange Alt gedrückt ist, zeigen sie ihre Nummer
+  const altAus = () => document.body.classList.remove('alt');
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Alt') { document.body.classList.add('alt'); return; }
+    const m = /^Digit([1-9])$/.exec(e.code || '');
+    if (!m || !e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || dlg.open) return;
+    const a = quick.querySelectorAll('.tile')[m[1] - 1]; if (!a) return;
+    e.preventDefault(); e.stopPropagation(); benutzt(a.dataset.k); window.open(a.href, '_blank', 'noopener');
+  }, true);
+  document.addEventListener('keyup', e => { if (e.key === 'Alt') { e.preventDefault(); altAus(); } });
+  window.addEventListener('blur', altAus);
+
   const sichtbareLinks = () => [...grid.querySelectorAll('.link')].filter(a => a.offsetParent);
   document.addEventListener('keydown', e => {
     if (dlg.open || e.target === q || e.ctrlKey || e.metaKey || e.altKey) return;

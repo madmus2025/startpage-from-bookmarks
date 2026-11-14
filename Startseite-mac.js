@@ -145,6 +145,10 @@ function domainPasst(e, regel) {
 }
 
 function thema(e, konfig) {
+  if (e.Thema) {   // Firmenlink mit festem Thema
+    const k = konfig.kategorien.find(k => e.Thema === k.name || e.Thema === k.name_en);
+    return k ? k.name : 'ordner:' + e.Thema;
+  }
   let beste = '', laenge = 0;
   for (const k of konfig.kategorien) for (const d of k.domains || []) {
     if (d && d.length > laenge && domainPasst(e, d)) { beste = k.name; laenge = d.length; }
@@ -167,7 +171,12 @@ const htmlEsc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&
 // Fasst Dubletten zusammen, gliedert nach Themen und setzt die Daten in die Vorlage ein
 function baueSeite(alle, konfig, vorlage) {
   const map = new Map(); let ignoriert = 0;
-  for (const b of alle) {
+  // Firmenlinks aus kategorien.json stehen bei allen auf der Seite (zuerst, damit sie im Schnellzugriff vorn liegen)
+  const firma = (konfig.firmenlinks || []).filter(f => f && /^https?:\/\//i.test(f.url || '')).map(f => ({
+    Titel: String(f.titel || '').trim(), Url: String(f.url).trim(), Ordner: '', Top: '',
+    Leiste: !!f.schnellzugriff, Quelle: '', Firma: true, Thema: String(f.thema || '').trim()
+  }));
+  for (const b of firma.concat(alle)) {
     const u = zerlege(b.Url); if (!u) continue;
     const hostName = u.host.replace(/^www\./, '');
     const hostPfad = (hostName + u.pfad).toLowerCase();
@@ -181,26 +190,28 @@ function baueSeite(alle, konfig, vorlage) {
       if (!x.Titel && titelOk) x.Titel = b.Titel;
       if (!x.Top && b.Top) { x.Top = b.Top; x.Ordner = b.Ordner; }
       if (b.Leiste) x.Leiste = true;
-      if (!x.Browser.includes(browser)) x.Browser.push(browser);
+      if (b.Firma) { x.Firma = true; x.Thema = b.Thema; if (titelOk) x.Titel = b.Titel; }
+      else if (!x.Browser.includes(browser)) x.Browser.push(browser);
     } else {
-      map.set(k, { Titel: titelOk ? b.Titel : '', Url: b.Url, HostName: hostName, HostPfad: hostPfad, Ordner: b.Ordner, Top: b.Top, Leiste: b.Leiste, Browser: [browser] });
+      map.set(k, { Titel: titelOk ? b.Titel : '', Url: b.Url, HostName: hostName, HostPfad: hostPfad, Ordner: b.Ordner, Top: b.Top, Leiste: b.Leiste,
+                   Browser: b.Firma ? [] : [browser], Firma: !!b.Firma, Thema: b.Firma ? b.Thema : '' });
     }
   }
   const eintraege = [...map.values()];
   for (const x of eintraege) if (!x.Titel) x.Titel = x.HostName;
-  const dubletten = alle.length - ignoriert - eintraege.length;
+  const dubletten = firma.length + alle.length - ignoriert - eintraege.length;
 
   const gruppen = new Map();
   const add = (k, x) => { if (!gruppen.has(k)) gruppen.set(k, []); gruppen.get(k).push(x); };
   for (const x of eintraege) add(thema(x, konfig), x);
   const min = konfig.mindestOrdnerGroesse > 0 ? konfig.mindestOrdnerGroesse : 3;
   for (const k of [...gruppen.keys()].filter(k => k.startsWith('ordner:'))) {
-    if (gruppen.get(k).length >= min) continue;
+    if (gruppen.get(k).length >= min || gruppen.get(k).some(x => x.Firma)) continue;
     for (const x of gruppen.get(k)) add(stichwortThema(x.Titel + ' ' + x.HostName, konfig), x);
     gruppen.delete(k);
   }
 
-  const item = x => ({ t: x.Titel, u: x.Url, h: x.HostName, o: x.Ordner, b: x.Browser.slice() });
+  const item = x => Object.assign({ t: x.Titel, u: x.Url, h: x.HostName, o: x.Ordner, b: x.Browser.slice() }, x.Firma ? { f: 1 } : {});
   const gruppe = (name, nameEn, icon, liste) => ({ name, name_en: nameEn || name, icon, items: liste.slice().sort(sortiere).map(item) });
   const kategorien = [];
   for (const k of konfig.kategorien) if (gruppen.has(k.name)) kategorien.push(gruppe(k.name, k.name_en, k.icon, gruppen.get(k.name)));
