@@ -33,7 +33,7 @@ Windows & macOS, no server, no install, no cloud.
 
 | Option | What it does |
 |---|---|
-| Update automatically at every sign-in | Autostart entry that rebuilds the page at each Windows sign-in |
+| Update automatically (whenever bookmarks change) | Autostart entry that starts a small invisible watcher at sign-in. It rebuilds the page within seconds whenever a browser saves its bookmarks (Chrome, Edge, Brave, Vivaldi, Opera, Firefox backups), plus every 2 hours. |
 | Desktop shortcut | `Startseite.url` on the desktop |
 | Firefox: set as home page | set automatically via `user.js`, takes effect after restarting Firefox |
 | Chrome / Edge / Brave: open settings | These browsers don't let programs change the home page. The address is copied to the clipboard and the *On startup* settings page opens – just *Add a new page → Ctrl+V*. |
@@ -52,7 +52,7 @@ Requires only Windows PowerShell 5.1 (built into Windows 10/11).
 
 | Option | What it does |
 |---|---|
-| Update at login and every 2 hours | LaunchAgent `~/Library/LaunchAgents/local.startseite.aktualisieren.plist` |
+| Update automatically | LaunchAgent `~/Library/LaunchAgents/local.startseite.aktualisieren.plist` – rebuilds the page within seconds whenever a bookmark file changes (Chrome/Edge/Brave/…, Safari, Firefox backups), plus at login and every 2 hours |
 | Desktop shortcut | `Startseite.html` (a link to the page; macOS no longer opens `.webloc` files that point to a local file) |
 | Firefox: set as home page | automatic via `user.js` |
 | Safari / Chrome / Edge / Brave: open settings | address copied to the clipboard, browser opens – paste it there (Safari: *Settings → General → Homepage*) |
@@ -113,7 +113,7 @@ Force a language for testing: `index.html?lang=en` or `?lang=de`.
 ## Known limitations
 
 - **New tab page:** Chrome/Edge don't allow a local file as the new tab page. The start page appears at browser start and via the Home button (Alt+Home).
-- **Firefox** is read from its automatic bookmark backup, which Firefox writes about once a day – brand-new Firefox bookmarks may appear a day later.
+- **Firefox** is read from its automatic bookmark backup, which Firefox writes about once a day – brand-new Firefox bookmarks may appear a day later. Chromium browsers and Safari update within seconds. New browsers or profiles are picked up at the next sign-in (Windows) or after running the installer again (macOS). An already open start page shows changes after reloading.
 - **Bookmarks are never changed.** Hiding or pinning only affects the start page; a static page cannot modify browser bookmarks.
 - Arc and sandboxed Microsoft Store browsers are not supported; Safari only on macOS (with Full Disk Access).
 - The macOS version has not yet been tested on a wide range of macOS versions – feedback welcome.

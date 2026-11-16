@@ -282,14 +282,34 @@ function macIO() {
 const sh_q = s => "'" + String(s).replace(/'/g, "'\\''") + "'";
 const dateiUrl = p => 'file://' + encodeURI(p);
 
-function sammleMac(io, hinweise, bericht = []) {
-  const alle = [];
-  const AS = io.home + '/Library/Application Support';
-  const chromium = [
+const chromiumOrdner = home => {
+  const AS = home + '/Library/Application Support';
+  return [
     ['Google Chrome', AS + '/Google/Chrome'], ['Microsoft Edge', AS + '/Microsoft Edge'],
     ['Brave', AS + '/BraveSoftware/Brave-Browser'], ['Vivaldi', AS + '/Vivaldi'], ['Chromium', AS + '/Chromium'],
     ['Opera', AS + '/com.operasoftware.Opera'], ['Opera GX', AS + '/com.operasoftware.OperaGX']
   ];
+};
+
+// Dateien, deren Änderung eine neue Startseite auslöst (launchd „WatchPaths“)
+function lesezeichenPfade(io) {
+  const pfade = [];
+  for (const [, ordner] of chromiumOrdner(io.home)) {
+    if (!io.istOrdner(ordner)) continue;
+    if (io.exists(ordner + '/Bookmarks')) pfade.push(ordner + '/Bookmarks');
+    for (const p of io.liste(ordner)) if ((p === 'Default' || /^Profile /.test(p)) && io.exists(`${ordner}/${p}/Bookmarks`)) pfade.push(`${ordner}/${p}/Bookmarks`);
+  }
+  const ff = io.home + '/Library/Application Support/Firefox/Profiles';
+  if (io.istOrdner(ff)) for (const p of io.liste(ff)) if (io.istOrdner(`${ff}/${p}/bookmarkbackups`)) pfade.push(`${ff}/${p}/bookmarkbackups`);
+  const safari = io.home + '/Library/Safari/Bookmarks.plist';
+  if (io.exists(safari)) pfade.push(safari);
+  return pfade;
+}
+
+function sammleMac(io, hinweise, bericht = []) {
+  const alle = [];
+  const AS = io.home + '/Library/Application Support';
+  const chromium = chromiumOrdner(io.home);
   for (const [name, ordner] of chromium) {
     if (!io.istOrdner(ordner)) continue;
     let namen = {};
@@ -333,14 +353,14 @@ const L = {
   de: {
     titel: 'Startseite einrichten', ok: 'Einrichten', abbrechen: 'Abbrechen',
     prompt: 'Die Startseite wird aus den Lesezeichen aller Browser erzeugt. Ausgewählte Optionen werden eingerichtet (⌘-Klick zum An-/Abwählen):',
-    auto: 'Bei Anmeldung und alle 2 Stunden automatisch aktualisieren',
+    auto: 'Automatisch aktualisieren (bei jeder Lesezeichen-Änderung, bei Anmeldung und alle 2 Stunden)',
     desktop: 'Verknüpfung „Startseite“ auf dem Schreibtisch',
     firefox: 'Firefox: als Startseite eintragen (automatisch)',
     oeffnen: 'Startseite nach dem Einrichten öffnen',
     browser: n => `${n}: Einstellungen öffnen (Adresse in der Zwischenablage)`,
     fertig: 'Die Startseite ist eingerichtet.',
     zusammen: (g, d, t) => `${g} Lesezeichen, ${d} Dubletten zusammengeführt, ${t} Themen`,
-    okAuto: 'Wird bei Anmeldung und alle 2 Stunden aktualisiert', okDesktop: 'Verknüpfung auf dem Schreibtisch', okFirefox: 'Firefox: als Startseite eingetragen (nach Neustart)',
+    okAuto: 'Wird bei jeder Lesezeichen-Änderung aktualisiert (nach wenigen Sekunden), außerdem bei Anmeldung und alle 2 Stunden', okDesktop: 'Verknüpfung auf dem Schreibtisch', okFirefox: 'Firefox: als Startseite eingetragen (nach Neustart)',
     handgriff: n => `Noch ein Handgriff für ${n}:\nDie Adresse ist in der Zwischenablage. Nach „OK“ öffnen sich die Einstellungen.\n\n` +
       `• Chrome/Edge/Brave: „Beim Start“ → „Bestimmte Seiten öffnen“ → „Neue Seite hinzufügen“ → ⌘V\n` +
       `• Safari: Einstellungen (⌘,) → Allgemein → „Homepage“ → ⌘V, und „Neue Fenster öffnen mit: Homepage“`,
@@ -354,14 +374,14 @@ const L = {
   en: {
     titel: 'Set up start page', ok: 'Set up', abbrechen: 'Cancel',
     prompt: 'The start page is built from the bookmarks of all your browsers. Selected options will be set up (⌘-click to toggle):',
-    auto: 'Update automatically at login and every 2 hours',
+    auto: 'Update automatically (whenever bookmarks change, at login and every 2 hours)',
     desktop: 'Shortcut “Startseite” on the desktop',
     firefox: 'Firefox: set as home page (automatic)',
     oeffnen: 'Open the start page when done',
     browser: n => `${n}: open settings (address on clipboard)`,
     fertig: 'The start page is set up.',
     zusammen: (g, d, t) => `${g} bookmarks, ${d} duplicates merged, ${t} topics`,
-    okAuto: 'Updates at login and every 2 hours', okDesktop: 'Desktop shortcut', okFirefox: 'Firefox: set as home page (after restart)',
+    okAuto: 'Updates whenever bookmarks change (within seconds), plus at login and every 2 hours', okDesktop: 'Desktop shortcut', okFirefox: 'Firefox: set as home page (after restart)',
     handgriff: n => `One more step for ${n}:\nThe address is on the clipboard. After “OK” the settings open.\n\n` +
       `• Chrome/Edge/Brave: “On startup” → “Open a specific page or set of pages” → “Add a new page” → ⌘V\n` +
       `• Safari: Settings (⌘,) → General → “Homepage” → ⌘V, and “New windows open with: Homepage”`,
@@ -433,6 +453,8 @@ function run(argv) {
   <key>ProgramArguments</key><array><string>/usr/bin/osascript</string><string>-l</string><string>JavaScript</string><string>${htmlEsc(installOrdner + '/Startseite-mac.js')}</string></array>
   <key>RunAtLoad</key><true/>
   <key>StartInterval</key><integer>7200</integer>
+  <key>WatchPaths</key><array>${lesezeichenPfade(io).map(p => `<string>${htmlEsc(p)}</string>`).join('')}</array>
+  <key>ThrottleInterval</key><integer>10</integer>
   <key>StandardErrorPath</key><string>${htmlEsc(installOrdner + '/protokoll.txt')}</string>
 </dict></plist>
 `);

@@ -17,7 +17,8 @@
 .PARAMETER Installieren
     Kopiert die App nach %LOCALAPPDATA%\Startseite, erzeugt die Seite, trägt sie
     in Chrome, Edge, Brave und Firefox als Startseite ein und legt einen
-    Autostart-Eintrag an, der die Seite bei jeder Anmeldung neu aufbaut.
+    Autostart-Eintrag an, der bei jeder Anmeldung einen kleinen Hintergrundwächter startet:
+    Er baut die Seite wenige Sekunden nach jeder Lesezeichen-Änderung neu auf.
 
 .PARAMETER Deinstallieren
     Macht alles von -Installieren rückgängig.
@@ -43,7 +44,8 @@ param(
     [switch]$Demo,
     [switch]$Oberflaeche,
     [switch]$Richtlinie,
-    [switch]$NurRichtlinie
+    [switch]$NurRichtlinie,
+    [switch]$Waechter
 )
 
 $ErrorActionPreference = 'Stop'
@@ -613,18 +615,91 @@ function Invoke-RichtlinieAlsAdmin([switch]$Entfernen) {
     }
 }
 
+# --- Hintergrundwächter: baut die Seite bei jeder Lesezeichen-Änderung neu -----
+# Überwacht je Browser-Profil die Datei „Bookmarks“ (Chrome, Edge, Brave, …) und
+# die Firefox-Lesezeichensicherungen. Läuft unsichtbar, startet bei der Anmeldung.
+function Get-WaechterZiele {
+    $L = $env:LOCALAPPDATA; $R = $env:APPDATA
+    $ziele = New-Object System.Collections.Generic.List[object]
+    $wurzeln = "$L\Google\Chrome\User Data", "$L\Microsoft\Edge\User Data", "$L\BraveSoftware\Brave-Browser\User Data",
+               "$L\Vivaldi\User Data", "$L\Chromium\User Data", "$R\Opera Software\Opera Stable", "$R\Opera Software\Opera GX Stable"
+    foreach ($w in $wurzeln) {
+        if (-not (Test-Path -LiteralPath $w)) { continue }
+        if (Test-Path -LiteralPath (Join-Path $w 'Bookmarks')) { $ziele.Add(@($w, 'Bookmarks')) }
+        foreach ($p in @(Get-ChildItem -LiteralPath $w -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq 'Default' -or $_.Name -like 'Profile *' })) {
+            $ziele.Add(@($p.FullName, 'Bookmarks'))
+        }
+    }
+    $ff = Join-Path $R 'Mozilla\Firefox\Profiles'
+    if (Test-Path -LiteralPath $ff) {
+        foreach ($p in @(Get-ChildItem -LiteralPath $ff -Directory)) {
+            $b = Join-Path $p.FullName 'bookmarkbackups'
+            if (Test-Path -LiteralPath $b) { $ziele.Add(@($b, '*.jsonlz4')) }
+        }
+    }
+    , $ziele
+}
+
+function Start-Waechter {
+    # nur ein Wächter je Benutzer; ein neuer wartet, bis ein alter (nach einem Update) beendet ist
+    $mutex = New-Object System.Threading.Mutex($false, 'Local\Startseite-Waechter')
+    try { if (-not $mutex.WaitOne(20000)) { return } } catch [Threading.AbandonedMutexException] { }
+    $skript = Join-Path $InstallOrdner 'Startseite.ps1'
+    $stand = if (Test-Path -LiteralPath $skript) { (Get-Item -LiteralPath $skript).LastWriteTimeUtc } else { $null }
+    $waechter = @()
+    foreach ($z in (Get-WaechterZiele)) {
+        $w = New-Object IO.FileSystemWatcher($z[0], $z[1])
+        $w.IncludeSubdirectories = $false
+        $w.InternalBufferSize = 65536
+        $w.NotifyFilter = [IO.NotifyFilters]'FileName, LastWrite, Size'
+        foreach ($art in 'Changed', 'Created', 'Renamed') {
+            Register-ObjectEvent -InputObject $w -EventName $art -SourceIdentifier "Startseite.$($waechter.Count).$art" | Out-Null
+        }
+        $w.EnableRaisingEvents = $true
+        $waechter += $w
+    }
+    Info ("Wächter aktiv: {0} Ordner" -f $waechter.Count)
+    try { $Alle.Clear(); New-Startseite } catch { Write-Warning $_.Exception.Message }
+    $letzter = Get-Date
+    while ($true) {
+        $e = Wait-Event -Timeout 5
+        if (-not (Test-Path -LiteralPath $AutostartLnk)) { break }                               # Autostart entfernt
+        if ($stand -and (Test-Path -LiteralPath $skript) -and (Get-Item -LiteralPath $skript).LastWriteTimeUtc -ne $stand) { break }   # neue Version installiert
+        $faellig = $false
+        if ($e) {
+            # Browser schreiben oft mehrmals kurz hintereinander: erst 2 s Ruhe abwarten
+            do { Get-Event | Remove-Event } while (Wait-Event -Timeout 2)
+            $faellig = $true
+        } elseif (((Get-Date) - $letzter).TotalHours -ge 2) { $faellig = $true }
+        if ($faellig -and (Test-Path -LiteralPath $AutostartLnk)) {
+            try { $Alle.Clear(); New-Startseite } catch { Write-Warning $_.Exception.Message }
+            $letzter = Get-Date
+        }
+    }
+    foreach ($w in $waechter) { $w.EnableRaisingEvents = $false; $w.Dispose() }
+    try { $mutex.ReleaseMutex() } catch { }
+}
+
+# startet den Wächter sofort (nicht erst bei der nächsten Anmeldung)
+function Start-WaechterProzess {
+    $skript = Join-Path $InstallOrdner 'Startseite.ps1'
+    if (-not (Test-Path -LiteralPath $skript)) { return }
+    Start-Process -FilePath (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe') -WindowStyle Hidden `
+        -ArgumentList "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File ""$skript"" -Waechter" -WorkingDirectory $InstallOrdner
+}
+
 # --- Autostart & Desktop-Verknüpfung ------------------------------------------
 function Set-Autostart {
     $skript = Join-Path $InstallOrdner 'Startseite.ps1'
     $shell = New-Object -ComObject WScript.Shell
     $lnk = $shell.CreateShortcut($AutostartLnk)
     $lnk.TargetPath = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
-    $lnk.Arguments = "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File ""$skript"""
+    $lnk.Arguments = "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File ""$skript"" -Waechter"
     $lnk.WorkingDirectory = $InstallOrdner
     $lnk.WindowStyle = 7
-    $lnk.Description = 'Baut die Startseite aus den aktuellen Lesezeichen neu auf'
+    $lnk.Description = 'Baut die Startseite bei jeder Lesezeichen-Änderung neu auf'
     $lnk.Save()
-    Info 'Autostart: Seite wird bei jeder Anmeldung aktualisiert'
+    Info 'Autostart: Seite wird bei jeder Lesezeichen-Änderung aktualisiert'
 }
 function Remove-Autostart { if (Test-Path -LiteralPath $AutostartLnk) { Remove-Item -LiteralPath $AutostartLnk } }
 
@@ -692,7 +767,7 @@ function Show-Einrichtung {
     Add-Text (Tx 'Die Startseite wird aus den Lesezeichen aller Browser erzeugt. Wähle aus, wie sie eingebunden werden soll.' 'The start page is built from the bookmarks of all your browsers. Choose how it should be set up.') 9.75 'Regular' $grau 4
 
     Add-Ueberschrift (Tx 'Allgemein' 'General')
-    $cbAuto    = Add-Option (Tx 'Bei jeder Anmeldung automatisch aktualisieren' 'Update automatically at every sign-in') $true
+    $cbAuto    = Add-Option (Tx 'Automatisch aktualisieren (bei jeder Lesezeichen-Änderung)' 'Update automatically (whenever bookmarks change)') $true
     $cbDesktop = Add-Option (Tx 'Verknüpfung „Startseite“ auf dem Desktop' 'Shortcut “Startseite” on the desktop') $true
     $cbOeffnen = Add-Option (Tx 'Startseite nach dem Einrichten öffnen' 'Open the start page when done') $true
 
@@ -764,7 +839,7 @@ function Invoke-Einrichtung($O) {
     $zeilen.Add("✔  $script:Zusammenfassung")
     $url = Get-SeitenUrl
 
-    if ($O.Autostart) { Set-Autostart; $zeilen.Add((Tx '✔  Wird bei jeder Anmeldung aktualisiert' '✔  Updates at every sign-in')) } else { Remove-Autostart }
+    if ($O.Autostart) { Set-Autostart; Start-WaechterProzess; $zeilen.Add((Tx '✔  Wird bei jeder Lesezeichen-Änderung aktualisiert (nach wenigen Sekunden)' '✔  Updates whenever bookmarks change (within seconds)')) } else { Remove-Autostart }
     if ($O.Desktop)   { Set-Desktoplink $url; $zeilen.Add((Tx '✔  Desktop-Verknüpfung „Startseite“' '✔  Desktop shortcut “Startseite”')) } else { Remove-Desktoplink }
     if (Test-Firefox) {
         if ($O.Firefox) { Set-FirefoxStartseite $url; $zeilen.Add((Tx '✔  Firefox: als Startseite eingetragen (nach Neustart)' '✔  Firefox: set as home page (after restart)')) } else { Remove-FirefoxStartseite }
@@ -843,6 +918,11 @@ if ($Oberflaeche) {
     return
 }
 
+if ($Waechter) {
+    Start-Waechter
+    return
+}
+
 if ($Deinstallieren) {
     Write-Host 'Startseite wird entfernt …' -ForegroundColor Cyan
     Invoke-Entfernen | Out-Null
@@ -858,6 +938,7 @@ if ($Installieren) {
     Write-Host ''
     Write-Host 'Einrichtung …' -ForegroundColor Cyan
     Set-Autostart
+    Start-WaechterProzess
     Set-FirefoxStartseite $url
     if ($Richtlinie) { Set-Richtlinie $url | Out-Null }
     else { Info 'Chrome / Edge / Brave: Startseite bitte in den Einstellungen eintragen (oder -Richtlinie als Administrator).' }

@@ -33,7 +33,7 @@ Windows & macOS, ohne Server, ohne Installation, ohne Cloud.
 
 | Option | Wirkung |
 |---|---|
-| Bei jeder Anmeldung automatisch aktualisieren | Autostart-Eintrag, baut die Seite bei jeder Windows-Anmeldung neu |
+| Automatisch aktualisieren (bei jeder Lesezeichen-Änderung) | Autostart-Eintrag, der bei der Anmeldung einen kleinen unsichtbaren Wächter startet. Er baut die Seite wenige Sekunden nach jeder gespeicherten Lesezeichen-Änderung neu (Chrome, Edge, Brave, Vivaldi, Opera, Firefox-Sicherung), außerdem alle 2 Stunden. |
 | Verknüpfung „Startseite“ auf dem Desktop | `Startseite.url` auf dem Desktop |
 | Firefox: als Startseite eintragen | wird automatisch gesetzt (über `user.js`), gilt nach Firefox-Neustart |
 | Chrome / Edge / Brave: Einstellungen öffnen | Diese Browser lassen sich die Startseite nicht von Programmen setzen. Die Adresse wird in die Zwischenablage kopiert und die Einstellungsseite „Beim Start“ geöffnet – dort *Neue Seite hinzufügen → Strg+V*. |
@@ -52,7 +52,7 @@ Benötigt nur Windows PowerShell 5.1 (in Windows 10/11 enthalten).
 
 | Option | Wirkung |
 |---|---|
-| Bei Anmeldung und alle 2 Stunden aktualisieren | LaunchAgent `~/Library/LaunchAgents/local.startseite.aktualisieren.plist` – Macs werden selten neu angemeldet, daher zusätzlich alle 2 Std. |
+| Automatisch aktualisieren | LaunchAgent `~/Library/LaunchAgents/local.startseite.aktualisieren.plist` – baut die Seite wenige Sekunden nach jeder Änderung einer Lesezeichen-Datei neu (Chrome/Edge/Brave/…, Safari, Firefox-Sicherung), außerdem bei Anmeldung und alle 2 Stunden |
 | Verknüpfung auf dem Schreibtisch | `Startseite.html` (Link auf die Seite; `.webloc`-Dateien mit lokaler Adresse öffnet macOS nicht mehr) |
 | Firefox: als Startseite eintragen | automatisch über `user.js` |
 | Safari / Chrome / Edge / Brave: Einstellungen öffnen | Adresse in die Zwischenablage, Browser öffnet sich – dort einfügen (Safari: *Einstellungen → Allgemein → Homepage*) |
@@ -118,7 +118,7 @@ Werden die Browserdaten inkl. Website-Daten gelöscht, ist alles wieder auf Stan
 ## Bekannte Grenzen
 
 - **Neuer Tab:** Chrome/Edge erlauben für die „Neuer Tab“-Seite keine lokale Datei. Die Startseite erscheint beim Browserstart und über den Home-Button (Alt+Pos1).
-- **Firefox** wird aus der automatischen Lesezeichen-Sicherung gelesen, die Firefox etwa einmal täglich schreibt – ganz neue Firefox-Lesezeichen erscheinen ggf. erst am nächsten Tag.
+- **Firefox** wird aus der automatischen Lesezeichen-Sicherung gelesen, die Firefox etwa einmal täglich schreibt – ganz neue Firefox-Lesezeichen erscheinen ggf. erst am nächsten Tag. Chromium-Browser und Safari werden nach wenigen Sekunden übernommen. Neue Browser oder Profile werden bei der nächsten Anmeldung (Windows) bzw. nach erneutem Ausführen des Installers (macOS) erkannt. Eine bereits geöffnete Startseite zeigt Änderungen nach dem Neuladen.
 - **Lesezeichen werden nie verändert.** Ausblenden und Favoriten wirken nur auf der Startseite; eine statische Seite kann Browser-Lesezeichen nicht ändern.
 - Arc und Browser im Microsoft-Store-Sandboxing werden nicht unterstützt; Safari nur auf dem Mac (mit Festplattenvollzugriff).
 - Die Mac-Fassung ist noch nicht auf vielen macOS-Versionen erprobt – Rückmeldungen willkommen.
