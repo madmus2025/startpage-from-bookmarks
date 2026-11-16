@@ -53,13 +53,13 @@ Benötigt nur Windows PowerShell 5.1 (in Windows 10/11 enthalten).
 | Option | Wirkung |
 |---|---|
 | Bei Anmeldung und alle 2 Stunden aktualisieren | LaunchAgent `~/Library/LaunchAgents/local.startseite.aktualisieren.plist` – Macs werden selten neu angemeldet, daher zusätzlich alle 2 Std. |
-| Verknüpfung auf dem Schreibtisch | `Startseite.webloc` |
+| Verknüpfung auf dem Schreibtisch | `Startseite.html` (Link auf die Seite; `.webloc`-Dateien mit lokaler Adresse öffnet macOS nicht mehr) |
 | Firefox: als Startseite eintragen | automatisch über `user.js` |
 | Safari / Chrome / Edge / Brave: Einstellungen öffnen | Adresse in die Zwischenablage, Browser öffnet sich – dort einfügen (Safari: *Einstellungen → Allgemein → Homepage*) |
 
 Ablage: `~/Library/Application Support/Startseite/index.html`. Entfernen: **`Deinstallieren-Mac.command`**.
 
-**Safari-Lesezeichen** liegen in einem geschützten Ordner. Damit sie gelesen werden können, unter *Systemeinstellungen → Datenschutz & Sicherheit → Festplattenvollzugriff* **Terminal** erlauben – und für die automatische Aktualisierung zusätzlich **`/usr/bin/osascript`** (mit ⌘⇧G den Pfad eingeben). Ohne diese Freigabe funktioniert alles andere.
+**Safari-Lesezeichen** liegen in einem geschützten Ordner. Damit sie gelesen werden können, unter *Systemeinstellungen → Datenschutz & Sicherheit → Festplattenvollzugriff* **Terminal** erlauben – und für die automatische Aktualisierung zusätzlich **`/usr/bin/osascript`** (mit ⌘⇧G den Pfad eingeben) und danach `Installieren-Mac.command` erneut starten. Ohne diese Freigabe funktioniert alles andere. Das Einrichtungsfenster zeigt jeden gefundenen Browser mit der Zahl seiner Lesezeichen und bietet einen Knopf, der die Einstellung „Festplattenvollzugriff“ öffnet.
 
 Ohne Doppelklick (Terminal): `osascript -l JavaScript ~/Downloads/Startseite/Startseite-mac.js --einrichten`
 

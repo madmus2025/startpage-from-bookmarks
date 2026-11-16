@@ -53,13 +53,13 @@ Requires only Windows PowerShell 5.1 (built into Windows 10/11).
 | Option | What it does |
 |---|---|
 | Update at login and every 2 hours | LaunchAgent `~/Library/LaunchAgents/local.startseite.aktualisieren.plist` |
-| Desktop shortcut | `Startseite.webloc` |
+| Desktop shortcut | `Startseite.html` (a link to the page; macOS no longer opens `.webloc` files that point to a local file) |
 | Firefox: set as home page | automatic via `user.js` |
 | Safari / Chrome / Edge / Brave: open settings | address copied to the clipboard, browser opens – paste it there (Safari: *Settings → General → Homepage*) |
 
 The page is stored at `~/Library/Application Support/Startseite/index.html`. Remove with **`Deinstallieren-Mac.command`**.
 
-**Safari bookmarks** live in a protected folder. To include them, allow **Terminal** under *System Settings → Privacy & Security → Full Disk Access* – and **`/usr/bin/osascript`** for automatic updates (press ⌘⇧G to enter the path). Everything else works without it.
+**Safari bookmarks** live in a protected folder. To include them, allow **Terminal** under *System Settings → Privacy & Security → Full Disk Access* – and **`/usr/bin/osascript`** for automatic updates (press ⌘⇧G to enter the path), then run `Installieren-Mac.command` again. Everything else works without it. The setup dialog lists every browser it found with its bookmark count and offers a button that opens the Full Disk Access settings.
 
 Without double-click: `osascript -l JavaScript ~/Downloads/Startseite/Startseite-mac.js --einrichten`
 

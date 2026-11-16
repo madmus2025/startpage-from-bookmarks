@@ -282,7 +282,7 @@ function macIO() {
 const sh_q = s => "'" + String(s).replace(/'/g, "'\\''") + "'";
 const dateiUrl = p => 'file://' + encodeURI(p);
 
-function sammleMac(io, hinweise) {
+function sammleMac(io, hinweise, bericht = []) {
   const alle = [];
   const AS = io.home + '/Library/Application Support';
   const chromium = [
@@ -297,30 +297,33 @@ function sammleMac(io, hinweise) {
     const dateien = [];
     if (io.exists(ordner + '/Bookmarks')) dateien.push([ordner + '/Bookmarks', '']);
     for (const p of io.liste(ordner)) if (p === 'Default' || /^Profile /.test(p)) if (io.exists(`${ordner}/${p}/Bookmarks`)) dateien.push([`${ordner}/${p}/Bookmarks`, p]);
+    if (!dateien.length) bericht.push([name, 0]);
     for (const [datei, profil] of dateien) {
       const quelle = dateien.length > 1 ? `${name} · ${namen[profil] || profil}` : name;
       const vorher = alle.length;
-      try { leseChromium(JSON.parse(io.lies(datei)), quelle, alle); console.log(`  ${quelle}: ${alle.length - vorher}`); }
+      try { leseChromium(JSON.parse(io.lies(datei)), quelle, alle); console.log(`  ${quelle}: ${alle.length - vorher}`); bericht.push([quelle, alle.length - vorher]); }
       catch (e) { hinweise.push(`${quelle}: ${e.message}`); }
     }
   }
   // Firefox
   const ff = AS + '/Firefox/Profiles';
   const profile = io.istOrdner(ff) ? io.liste(ff).filter(p => io.istOrdner(`${ff}/${p}/bookmarkbackups`)) : [];
+  // Firefox installiert, aber noch keine Lesezeichen-Sicherung geschrieben
+  if (io.istOrdner(ff) && !profile.some(p => io.liste(`${ff}/${p}/bookmarkbackups`).some(f => /\.jsonlz4$/.test(f)))) hinweise.push('FIREFOX_SICHERUNG');
   for (const p of profile) {
     const dir = `${ff}/${p}/bookmarkbackups`;
     const datei = io.liste(dir).filter(f => /\.jsonlz4$/.test(f)).sort().pop();
     if (!datei) continue;
     const quelle = profile.length > 1 ? 'Firefox · ' + p.replace(/^[^.]+\./, '') : 'Firefox';
     const vorher = alle.length;
-    try { leseFirefox(JSON.parse(mozLz4(io.bytes(`${dir}/${datei}`))), quelle, alle); console.log(`  ${quelle}: ${alle.length - vorher}`); }
+    try { leseFirefox(JSON.parse(mozLz4(io.bytes(`${dir}/${datei}`))), quelle, alle); console.log(`  ${quelle}: ${alle.length - vorher}`); bericht.push([quelle, alle.length - vorher]); }
     catch (e) { hinweise.push(`${quelle}: ${e.message}`); }
   }
   // Safari (benötigt "Festplattenvollzugriff" für Terminal bzw. osascript)
   const safari = io.home + '/Library/Safari/Bookmarks.plist';
   if (io.exists(safari)) {
     const pl = io.plist(safari);
-    if (pl) { const vorher = alle.length; leseSafari(pl, 'Safari', alle); console.log(`  Safari: ${alle.length - vorher}`); }
+    if (pl) { const vorher = alle.length; leseSafari(pl, 'Safari', alle); console.log(`  Safari: ${alle.length - vorher}`); bericht.push(['Safari', alle.length - vorher]); }
     else hinweise.push('SAFARI_ZUGRIFF');
   }
   return alle;
@@ -341,7 +344,10 @@ const L = {
     handgriff: n => `Noch ein Handgriff für ${n}:\nDie Adresse ist in der Zwischenablage. Nach „OK“ öffnen sich die Einstellungen.\n\n` +
       `• Chrome/Edge/Brave: „Beim Start“ → „Bestimmte Seiten öffnen“ → „Neue Seite hinzufügen“ → ⌘V\n` +
       `• Safari: Einstellungen (⌘,) → Allgemein → „Homepage“ → ⌘V, und „Neue Fenster öffnen mit: Homepage“`,
-    safariZugriff: 'Safari: kein Zugriff auf die Lesezeichen. Bitte in Systemeinstellungen → Datenschutz & Sicherheit → Festplattenvollzugriff „Terminal“ (und für die automatische Aktualisierung „/usr/bin/osascript“) erlauben.',
+    safariZugriff: 'Safari: kein Zugriff auf die Lesezeichen. Bitte in Systemeinstellungen → Datenschutz & Sicherheit → Festplattenvollzugriff „Terminal“ (und für die automatische Aktualisierung „/usr/bin/osascript“, mit ⌘⇧G eingeben) erlauben und danach „Installieren-Mac.command“ erneut starten.',
+    firefoxSicherung: 'Firefox: noch keine Lesezeichen-Sicherung vorhanden. Firefox legt sie automatisch an (etwa einmal täglich); danach erscheinen die Firefox-Lesezeichen beim nächsten Aktualisieren.',
+    quellen: q => 'Gefunden: ' + (q.length ? q.map(([n, a]) => `${n} ${a}`).join(' · ') : 'keine Browser-Lesezeichen'),
+    zugriffOeffnen: 'Festplattenvollzugriff öffnen',
     entfernenFrage: 'Startseite, automatische Aktualisierung, Verknüpfung und Firefox-Eintrag wirklich entfernen?',
     entfernt: 'Die Startseite wurde entfernt.', ja: 'Entfernen', fehler: 'Bei der Einrichtung ist ein Fehler aufgetreten:'
   },
@@ -359,7 +365,10 @@ const L = {
     handgriff: n => `One more step for ${n}:\nThe address is on the clipboard. After “OK” the settings open.\n\n` +
       `• Chrome/Edge/Brave: “On startup” → “Open a specific page or set of pages” → “Add a new page” → ⌘V\n` +
       `• Safari: Settings (⌘,) → General → “Homepage” → ⌘V, and “New windows open with: Homepage”`,
-    safariZugriff: 'Safari: no access to bookmarks. Please allow “Terminal” (and “/usr/bin/osascript” for automatic updates) under System Settings → Privacy & Security → Full Disk Access.',
+    safariZugriff: 'Safari: no access to bookmarks. Please allow “Terminal” (and “/usr/bin/osascript” for automatic updates, enter it with ⌘⇧G) under System Settings → Privacy & Security → Full Disk Access, then run “Installieren-Mac.command” again.',
+    firefoxSicherung: 'Firefox: no bookmark backup yet. Firefox creates it automatically (about once a day); the Firefox bookmarks will appear with the next update.',
+    quellen: q => 'Found: ' + (q.length ? q.map(([n, a]) => `${n} ${a}`).join(' · ') : 'no browser bookmarks'),
+    zugriffOeffnen: 'Open Full Disk Access',
     entfernenFrage: 'Really remove the start page, automatic updates, shortcut and Firefox setting?',
     entfernt: 'The start page has been removed.', ja: 'Remove', fehler: 'Setup failed:'
   }
@@ -371,7 +380,8 @@ function run(argv) {
   const installOrdner = io.home + '/Library/Application Support/Startseite';
   const agentLabel = 'local.startseite.aktualisieren';
   const agentPlist = `${io.home}/Library/LaunchAgents/${agentLabel}.plist`;
-  const desktopLink = io.home + '/Desktop/Startseite.webloc';
+  const desktopLink = io.home + '/Desktop/Startseite.html';
+  const desktopAlt = io.home + '/Desktop/Startseite.webloc';   // frühere Fassung, wird entfernt
   const ffProfile = io.home + '/Library/Application Support/Firefox/Profiles';
   const ffMuster = /\/\/ >>> Startseite[\s\S]*?\/\/ <<< Startseite\r?\n?/g;
   const dateien = ['Startseite-mac.js', 'kategorien.json', 'startseite.vorlage.html'];
@@ -392,12 +402,13 @@ function run(argv) {
     const konfig = JSON.parse(io.lies(basis + '/kategorien.json'));
     const vorlage = io.lies(basis + '/startseite.vorlage.html');
     console.log('Lesezeichen werden gesammelt …');
-    const alle = sammleMac(io, hinweise);
+    const bericht = [];
+    const alle = sammleMac(io, hinweise, bericht);
     const r = baueSeite(alle, konfig, vorlage);
     io.schreib(ausgabe, r.html);
     console.log(`Fertig: ${r.gesamt} Lesezeichen, ${r.dubletten} Dubletten, ${r.themen} Themen → ${ausgabe}`);
     hinweise.forEach(h => console.log('  Hinweis: ' + h));
-    return { r, hinweise };
+    return { r, hinweise, bericht };
   };
 
   const firefoxSetzen = an => {
@@ -428,11 +439,10 @@ function run(argv) {
     io.sh(`launchctl bootstrap gui/${uid()} ${sh_q(agentPlist)} 2>/dev/null || true`);
   };
   const desktopSetzen = an => {
-    if (!an) { io.loesche(desktopLink); return; }
-    io.schreib(desktopLink, `<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0"><dict><key>URL</key><string>${htmlEsc(url)}</string></dict></plist>
-`);
+    // .webloc mit file://-Adresse blockiert macOS („Dokument konnte nicht geöffnet werden“) → symbolischer Link auf die Seite
+    io.loesche(desktopAlt);
+    io.sh(`rm -f ${sh_q(desktopLink)}`);
+    if (an) io.sh(`ln -s ${sh_q(ausgabe)} ${sh_q(desktopLink)}`);
   };
   const browserListe = () => {
     const apps = [['Safari', '/Applications/Safari.app', '', ''],
@@ -481,17 +491,19 @@ function run(argv) {
       for (const f of dateien) io.kopiere(`${basis}/${f}`, `${installOrdner}/${f}`);
       basis = installOrdner;
     }
-    const { r, hinweise } = erzeuge();
-    const zeilen = ['✔  ' + T.zusammen(r.gesamt, r.dubletten, r.themen)];
+    const { r, hinweise, bericht } = erzeuge();
+    const zeilen = ['✔  ' + T.zusammen(r.gesamt, r.dubletten, r.themen), '     ' + T.quellen(bericht)];
     agentSetzen(an('auto')); if (an('auto')) zeilen.push('✔  ' + T.okAuto);
     desktopSetzen(an('desktop')); if (an('desktop')) zeilen.push('✔  ' + T.okDesktop);
     if (io.istOrdner(ffProfile)) { firefoxSetzen(an('firefox')); if (an('firefox')) zeilen.push('✔  ' + T.okFirefox); }
-    for (const h of hinweise) zeilen.push('⚠  ' + (h === 'SAFARI_ZUGRIFF' ? T.safariZugriff : h));
+    for (const h of hinweise) zeilen.push('⚠  ' + (h === 'SAFARI_ZUGRIFF' ? T.safariZugriff : h === 'FIREFOX_SICHERUNG' ? T.firefoxSicherung : h));
 
     const gewaehlt = browser.filter(b => an('b:' + b.name));
     let text = T.fertig + '\n\n' + zeilen.join('\n');
     if (gewaehlt.length) { io.app.setTheClipboardTo(url); text += '\n\n' + T.handgriff(gewaehlt.map(b => b.name).join(', ')); }
-    dialog(text);
+    const ohneZugriff = hinweise.includes('SAFARI_ZUGRIFF');
+    const antwort = dialog(text, ohneZugriff ? [T.zugriffOeffnen, 'OK'] : ['OK']);
+    if (ohneZugriff && antwort.buttonReturned === T.zugriffOeffnen) io.sh(`open ${sh_q('x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles')}`);
     for (const b of gewaehlt) {
       if (b.seite) io.sh(`nohup ${sh_q(b.bin)} ${sh_q(b.seite)} >/dev/null 2>&1 &`);
       else io.sh(`open -a ${sh_q(b.app)}`);
