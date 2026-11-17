@@ -99,7 +99,7 @@ kbd{font:inherit;font-size:11.5px;padding:2px 7px;border-radius:6px;border:1px s
 .chip:focus-visible{outline:none;box-shadow:0 0 0 3px var(--ring)}
 
 /* Karten */
-.grid{columns:310px;column-gap:18px}
+.grid{columns:var(--spalte,310px);column-gap:18px}
 .card{
   break-inside:avoid;margin:0 0 18px;padding:12px 8px 8px;border-radius:20px;
   background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow);
@@ -120,7 +120,7 @@ kbd{font:inherit;font-size:11.5px;padding:2px 7px;border-radius:6px;border:1px s
 .link:hover,.link:focus-visible{background:var(--surface-2);outline:none}
 .link.best{background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--accent)}
 .row{position:relative}
-.row .link{padding-right:70px}
+.row .link{padding-right:100px}
 .row.x{display:none}
 .card.alle .row.x, body.suche .row.x{display:block}
 .lt{display:flex;flex-direction:column;min-width:0;flex:1}
@@ -142,7 +142,69 @@ kbd{font:inherit;font-size:11.5px;padding:2px 7px;border-radius:6px;border:1px s
 body.alt .tw .nr{opacity:1;transform:none}
 .tw .act{position:absolute;top:2px;right:2px;width:24px;height:24px;background:var(--bg);box-shadow:0 0 0 1px var(--border)}
 .tw .act svg{width:12px;height:12px}
+.act[data-act="move"]:hover,.act[data-act="move"]:focus-visible{background:var(--surface-2);color:var(--accent);outline:none}
 @media (hover:none){.act{opacity:.55}}
+
+/* Zuordnen: Ziehen & Ablegen, leere eigene Themen */
+.card.drop{box-shadow:0 0 0 3px var(--accent), var(--shadow)}
+.chip.drop{border-color:var(--accent);color:var(--text);box-shadow:0 0 0 3px var(--ring)}
+.leerkarte{margin:2px 4px 4px;padding:16px 10px;border:1.5px dashed var(--border-strong);border-radius:12px;color:var(--faint);font-size:12.5px;text-align:center}
+
+/* Menü „Verschieben nach“ */
+.menu{position:fixed;z-index:20;width:290px;max-height:min(480px,calc(100vh - 24px));overflow:auto;padding:6px;border-radius:14px;
+      background:var(--bg);border:1px solid var(--border-strong);box-shadow:0 24px 60px -18px rgba(0,0,0,.45)}
+.menu .mh{padding:6px 10px 4px;font-size:11px;color:var(--faint);font-weight:650;text-transform:uppercase;letter-spacing:.05em}
+.mi{display:flex;align-items:center;gap:9px;width:100%;padding:7px 10px;border:0;border-radius:9px;background:none;color:var(--text);font:inherit;font-size:13px;text-align:left;cursor:pointer}
+.mi:hover,.mi:focus-visible{background:var(--surface-2);outline:none}
+.mi.akt{color:var(--accent);font-weight:600}
+.mi span{width:20px;text-align:center;flex:none}
+.menu .neu{display:flex;gap:6px;padding:6px 4px 4px}
+.menu .mo{display:flex;gap:8px;align-items:flex-start;margin-top:4px;padding:9px 10px 6px;border-top:1px solid var(--border);font-size:12.5px;color:var(--muted);cursor:pointer;line-height:1.4}
+.menu .mo b{color:var(--text);font-weight:600}
+.feld{flex:1;min-width:0;height:30px;padding:0 10px;border-radius:9px;border:1px solid var(--border-strong);background:var(--surface);color:var(--text);font:inherit;font-size:13px;outline:none}
+.feld:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--ring)}
+
+/* Einstellungen */
+dialog.breit{width:min(640px,calc(100vw - 32px));max-height:min(760px,calc(100vh - 48px))}
+.tabs{display:flex;gap:4px;padding:10px 18px 4px;border-bottom:1px solid var(--border)}
+.tab{border:0;background:none;padding:8px 12px;border-radius:9px;font:inherit;font-size:13px;font-weight:550;color:var(--muted);cursor:pointer}
+.tab:hover{color:var(--text)}
+.tab.on{background:var(--surface-2);color:var(--text)}
+.sek h3{margin:16px 8px 6px;font-size:11.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;font-weight:650}
+.sek h3:first-child{margin-top:8px}
+.trow{display:flex;align-items:center;gap:6px;padding:3px 6px;border-radius:10px}
+.trow:hover{background:var(--surface-2)}
+.trow .ic{flex:none;width:40px;text-align:center;font-size:16px}
+.trow input.ic{padding:0 4px}
+.trow .anz{font-size:12px;color:var(--faint);min-width:26px;text-align:right;font-variant-numeric:tabular-nums}
+.mini{flex:none;width:28px;height:28px;border:0;border-radius:8px;background:none;color:var(--muted);cursor:pointer;display:grid;place-items:center;font-size:14px}
+.mini:hover{background:var(--surface);color:var(--text)}
+.mini:disabled{opacity:.25;cursor:default;background:none}
+.mini.weg:hover{background:var(--danger-bg);color:var(--danger)}
+.zeile{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:4px 8px}
+.zeile .lab{min-width:120px;font-size:13px;color:var(--muted)}
+.seg{display:inline-flex;padding:3px;border-radius:11px;background:var(--surface-2);gap:2px}
+.seg button{border:0;background:none;padding:6px 12px;border-radius:8px;font:inherit;font-size:12.5px;color:var(--muted);cursor:pointer}
+.seg button.on{background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.farben{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.farbe{width:28px;height:28px;border-radius:50%;border:2px solid var(--bg);cursor:pointer;padding:0;box-shadow:0 0 0 1px var(--border-strong)}
+.farbe.on{box-shadow:0 0 0 2px var(--text)}
+.farben input[type=color]{width:34px;height:30px;border:1px solid var(--border-strong);border-radius:8px;padding:2px;background:var(--surface);cursor:pointer}
+.txt{margin:6px 8px 10px;color:var(--muted);font-size:13px;line-height:1.55}
+.regel{display:flex;align-items:center;gap:8px;padding:3px 8px;font-size:13px;border-radius:10px}
+.regel:hover{background:var(--surface-2)}
+.regel code{font-size:12.5px;color:var(--text)}
+.regel .pfeil{color:var(--faint)}
+.regel .z{flex:1}
+.knoepfe{display:flex;gap:8px;flex-wrap:wrap;padding:4px 8px}
+
+/* Darstellung: Dichte */
+body.dichte-kompakt .link{padding-top:4px;padding-bottom:4px}
+body.dichte-kompakt .ho{display:none}
+body.dichte-kompakt .card{padding:10px 6px 6px;margin-bottom:12px}
+body.dichte-luftig .link{padding-top:10px;padding-bottom:10px}
+body.dichte-luftig .ti{font-size:14.5px}
+body.dichte-luftig .card{padding:16px 10px 10px;margin-bottom:24px}
 
 .hbar{text-align:center;margin-top:6px}
 .linkbtn{border:0;background:none;color:var(--muted);font-size:12.5px;cursor:pointer;padding:6px 12px;border-radius:9px;display:inline-flex;align-items:center;gap:7px}
@@ -211,6 +273,7 @@ footer{margin-top:28px;color:var(--faint);font-size:12px;text-align:center;line-
     </div>
     <div class="right">
       <div class="clock" id="clock"></div>
+      <button class="iconbtn" id="einst-btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></button>
       <button class="iconbtn" id="theme" type="button" title="Darstellung"></button>
     </div>
     <div class="search">
@@ -232,6 +295,15 @@ footer{margin-top:28px;color:var(--faint);font-size:12px;text-align:center;line-
   <div class="dlg-b" id="dlg-b"></div>
   <div class="dlg-f"><button class="btn" id="dlg-all" type="button">Alle einblenden</button><button class="btn primary" id="dlg-x" type="button">Schließen</button></div>
 </dialog>
+
+<dialog id="einst" class="breit" aria-labelledby="einst-t">
+  <div class="dlg-h"><h2 id="einst-t"></h2></div>
+  <div class="tabs" role="tablist"><button class="tab on" type="button" data-tab="themen"></button><button class="tab" type="button" data-tab="design"></button><button class="tab" type="button" data-tab="daten"></button></div>
+  <div class="dlg-b sek" id="einst-b"></div>
+  <div class="dlg-f"><span></span><button class="btn primary" id="einst-x" type="button"></button></div>
+</dialog>
+<div class="menu" id="menu" role="menu" hidden></div>
+<input type="file" id="import" accept="application/json,.json" hidden>
 <div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-t"></span><button id="toast-u" type="button">Rückgängig</button></div>
 
 <script>
@@ -264,6 +336,24 @@ const DATA = /*__DATEN__*/null;
       ordner: 'Ordner: ', aus: 'Aus: ', firma: 'Firmenlink', taste: n => `${ALT}+${n} öffnet diesen Link`,
       hinzu: t => `„${t}“ zum Schnellzugriff hinzugefügt`, entfernt: t => `„${t}“ aus dem Schnellzugriff entfernt`, versteckt: t => `„${t}“ ausgeblendet`,
       rueck: 'Rückgängig',
+      move: 'Anderem Thema zuordnen (oder ziehen)', moveAria: t => `${t} einem anderen Thema zuordnen`,
+      verschiebenNach: 'Zuordnen zu', neuesThemaPh: 'Neues Thema …', anlegen: 'Anlegen',
+      alleVonDomain: d => `Alle Links von <b>${d}</b> – auch künftige`,
+      verschoben: (t, n) => `„${t}“ → ${n}`, domainVerschoben: (d, n) => `Alle Links von ${d} → ${n}`,
+      leerKarte: 'Noch leer – Links hierher ziehen oder über ⇄ zuordnen',
+      einst: 'Einstellungen', einstTitel: 'Einstellungen (Themen, Darstellung, Übertragen)', tabThemen: 'Themen', tabDesign: 'Darstellung', tabDaten: 'Übertragen', fertig: 'Fertig',
+      themenText: 'Reihenfolge, Namen und Symbole anpassen. Eigene Themen nehmen Links auf, die du über ⇄ oder per Ziehen zuordnest.',
+      hoch: 'Nach oben', runter: 'Nach unten', loeschen: 'Thema löschen', zuruecksetzenName: 'Ursprünglichen Namen wiederherstellen',
+      loeschenFrage: n => `Thema „${n}“ löschen? Die Links darin kehren in ihr ursprüngliches Thema zurück.`,
+      regeln: 'Regeln für ganze Domains', keineRegeln: 'Noch keine. Im Menü ⇄ eines Links „Alle Links von …“ anhaken.', regelWeg: 'Regel entfernen',
+      zuordnungReset: 'Alle Zuordnungen zurücksetzen', zuordnungResetFrage: 'Alle eigenen Zuordnungen und Domain-Regeln entfernen? Eigene Themen bleiben (leer) erhalten.',
+      akzent: 'Akzentfarbe', eigeneFarbe: 'Eigene Farbe', dichte: 'Dichte', kompakt: 'Kompakt', normal: 'Normal', luftig: 'Luftig',
+      breite: 'Kartenbreite', schmal: 'Schmal', breitW: 'Breit', modus: 'Hell / Dunkel', designReset: 'Darstellung zurücksetzen',
+      datenText: 'Favoriten, Ausgeblendetes, Themen-Zuordnungen und Darstellung speichert jeder Browser für sich. Mit Export und Import überträgst du sie in einen anderen Browser oder auf einen anderen Rechner.',
+      exportieren: 'Einstellungen exportieren', importieren: 'Einstellungen importieren …',
+      importFrage: 'Die Einstellungen dieses Browsers durch die importierten ersetzen?', importFehler: 'Diese Datei enthält keine Startseiten-Einstellungen.',
+      exportiert: 'Einstellungen exportiert (startseite-einstellungen.json)', allesReset: 'Alle Einstellungen dieses Browsers zurücksetzen',
+      allesResetFrage: 'Wirklich alle Einstellungen der Startseite in diesem Browser löschen (Favoriten, Ausgeblendetes, Themen, Darstellung)?',
       unpin: 'Aus dem Schnellzugriff entfernen', unpinAria: t => `${t} aus dem Schnellzugriff entfernen`,
       starAn: 'In den Schnellzugriff (oben)', starAnAria: t => `${t} zum Schnellzugriff hinzufügen`,
       hide: 'Ausblenden (Entf)', hideAria: t => `${t} ausblenden`,
@@ -278,7 +368,7 @@ const DATA = /*__DATEN__*/null;
       hintStart: (n, k) => `${n} Lesezeichen in ${k} Themen · Tippen zum Filtern, <kbd>Enter</kbd> öffnet den besten Treffer`,
       hintTreffer: (n, f, t, s) => `${n} Treffer${f ? ' im Filter' : ''} · <kbd>Enter</kbd> öffnet <b>${t}</b> · <kbd>Strg</kbd>+<kbd>Enter</kbd> sucht bei ${s}`,
       hintNichts: (s, q) => `Keine Lesezeichen gefunden · <kbd>Enter</kbd> sucht bei ${s} nach <b>${q}</b>`,
-      fuss: (stand, n, d, q) => `Stand ${stand} · ${n} Lesezeichen${d ? ` · ${d} Dubletten zusammengeführt` : ''}<br>${q ? 'Quellen: ' + q + '<br>' : ''}Wird automatisch aus den Browser-Lesezeichen neu aufgebaut. ☆ legt einen Link in den Schnellzugriff, × blendet ihn aus – beides wirkt nur auf dieser Startseite. <kbd>${ALT}</kbd>+<kbd>1</kbd>…<kbd>9</kbd> öffnet die Kacheln oben; häufig genutzte Links rücken nach vorn.`
+      fuss: (stand, n, d, q) => `Stand ${stand} · ${n} Lesezeichen${d ? ` · ${d} Dubletten zusammengeführt` : ''}<br>${q ? 'Quellen: ' + q + '<br>' : ''}Wird automatisch aus den Browser-Lesezeichen neu aufgebaut. ⇄ ordnet einen Link einem anderen Thema zu (oder einfach auf eine Karte ziehen), ☆ legt ihn in den Schnellzugriff, × blendet ihn aus – alles wirkt nur auf dieser Startseite. <kbd>${ALT}</kbd>+<kbd>1</kbd>…<kbd>9</kbd> öffnet die Kacheln oben; häufig genutzte Links rücken nach vorn.`
     },
     en: {
       gruss: ['Good night', 'Good morning', 'Good afternoon', 'Good evening'],
@@ -288,6 +378,24 @@ const DATA = /*__DATEN__*/null;
       ordner: 'Folder: ', aus: 'From: ', firma: 'Company link', taste: n => `${ALT}+${n} opens this link`,
       hinzu: t => `“${t}” added to quick access`, entfernt: t => `“${t}” removed from quick access`, versteckt: t => `“${t}” hidden`,
       rueck: 'Undo',
+      move: 'Assign to another topic (or drag)', moveAria: t => `Assign ${t} to another topic`,
+      verschiebenNach: 'Assign to', neuesThemaPh: 'New topic …', anlegen: 'Create',
+      alleVonDomain: d => `All links from <b>${d}</b> – including future ones`,
+      verschoben: (t, n) => `“${t}” → ${n}`, domainVerschoben: (d, n) => `All links from ${d} → ${n}`,
+      leerKarte: 'Empty – drag links here or assign them via ⇄',
+      einst: 'Settings', einstTitel: 'Settings (topics, appearance, transfer)', tabThemen: 'Topics', tabDesign: 'Appearance', tabDaten: 'Transfer', fertig: 'Done',
+      themenText: 'Change order, names and icons. Your own topics hold the links you assign via ⇄ or by dragging.',
+      hoch: 'Move up', runter: 'Move down', loeschen: 'Delete topic', zuruecksetzenName: 'Restore original name',
+      loeschenFrage: n => `Delete topic “${n}”? Its links go back to their original topic.`,
+      regeln: 'Rules for whole domains', keineRegeln: 'None yet. Tick “All links from …” in the ⇄ menu of a link.', regelWeg: 'Remove rule',
+      zuordnungReset: 'Reset all assignments', zuordnungResetFrage: 'Remove all your assignments and domain rules? Your own topics are kept (empty).',
+      akzent: 'Accent colour', eigeneFarbe: 'Custom colour', dichte: 'Density', kompakt: 'Compact', normal: 'Normal', luftig: 'Airy',
+      breite: 'Card width', schmal: 'Narrow', breitW: 'Wide', modus: 'Light / dark', designReset: 'Reset appearance',
+      datenText: 'Each browser keeps its own pins, hidden links, topic assignments and appearance. Export and import them to move them to another browser or computer.',
+      exportieren: 'Export settings', importieren: 'Import settings …',
+      importFrage: 'Replace the settings in this browser with the imported ones?', importFehler: 'This file does not contain start page settings.',
+      exportiert: 'Settings exported (startseite-einstellungen.json)', allesReset: 'Reset all settings in this browser',
+      allesResetFrage: 'Really delete all start page settings in this browser (pins, hidden links, topics, appearance)?',
       unpin: 'Remove from quick access', unpinAria: t => `Remove ${t} from quick access`,
       starAn: 'Add to quick access (top row)', starAnAria: t => `Add ${t} to quick access`,
       hide: 'Hide (Del)', hideAria: t => `Hide ${t}`,
@@ -302,7 +410,7 @@ const DATA = /*__DATEN__*/null;
       hintStart: (n, k) => `${n} bookmarks in ${k} topics · Type to filter, <kbd>Enter</kbd> opens the best match`,
       hintTreffer: (n, f, t, s) => `${n} match${n === 1 ? '' : 'es'}${f ? ' in filter' : ''} · <kbd>Enter</kbd> opens <b>${t}</b> · <kbd>Ctrl</kbd>+<kbd>Enter</kbd> searches ${s}`,
       hintNichts: (s, q) => `No bookmarks found · <kbd>Enter</kbd> searches ${s} for <b>${q}</b>`,
-      fuss: (stand, n, d, q) => `Updated ${stand} · ${n} bookmarks${d ? ` · ${d} duplicates merged` : ''}<br>${q ? 'Sources: ' + q + '<br>' : ''}Rebuilt automatically from your browser bookmarks. ☆ pins a link to quick access, × hides it – both only affect this start page. <kbd>${ALT}</kbd>+<kbd>1</kbd>…<kbd>9</kbd> opens the tiles at the top; links you use often move up.`
+      fuss: (stand, n, d, q) => `Updated ${stand} · ${n} bookmarks${d ? ` · ${d} duplicates merged` : ''}<br>${q ? 'Sources: ' + q + '<br>' : ''}Rebuilt automatically from your browser bookmarks. ⇄ assigns a link to another topic (or just drag it onto a card), ☆ pins it to quick access, × hides it – all only affect this start page. <kbd>${ALT}</kbd>+<kbd>1</kbd>…<kbd>9</kbd> opens the tiles at the top; links you use often move up.`
     }
   }[LANG];
   const kName = k => (LANG === 'en' && k.name_en) || k.name;   // angezeigter Themenname (Schlüssel bleibt k.name)
@@ -312,6 +420,8 @@ const DATA = /*__DATEN__*/null;
   $('#quick').setAttribute('aria-label', T.schnellzugriff); $('#chips').setAttribute('aria-label', T.themen);
   $('#dlg-t').textContent = T.dlgTitel; $('#dlg-p').textContent = T.dlgText;
   $('#dlg-all').textContent = T.dlgAlle; $('#dlg-x').textContent = T.dlgZu; $('#toast-u').textContent = T.rueck;
+  $('#einst-btn').title = T.einstTitel; $('#einst-btn').setAttribute('aria-label', T.einst); $('#einst-t').textContent = T.einst; $('#einst-x').textContent = T.fertig;
+  { const t = document.querySelectorAll('#einst .tab'); t[0].textContent = T.tabThemen; t[1].textContent = T.tabDesign; t[2].textContent = T.tabDaten; }
 
   const hue = s => { let h = 7; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
   const ICON_X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>';
@@ -326,10 +436,26 @@ const DATA = /*__DATEN__*/null;
   };
   const themeNames = T.themes;
   let theme = store.get('theme', 'auto');
+  /* ---------- Eigene Darstellung: Akzentfarbe, Dichte, Kartenbreite ---------- */
+  const FARBEN = ['#4f5fe8', '#0ea5e9', '#0d9488', '#16a34a', '#d97706', '#dc2626', '#db2777', '#7c3aed', '#475569'];
+  let design = Object.assign({ akzent: '', dichte: 'normal', breite: 'normal' }, store.get('design', {}));
+  const hexRgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+  const mische = (h, w) => '#' + hexRgb(h).map(c => Math.round(c + (255 - c) * w).toString(16).padStart(2, '0')).join('');
+  function applyDesign() {
+    const r = document.documentElement.style, dunkel = (theme === 'auto' ? systemTheme() : theme) === 'dark';
+    if (/^#[0-9a-f]{6}$/i.test(design.akzent)) {
+      const a = dunkel ? mische(design.akzent, 0.38) : design.akzent;
+      r.setProperty('--accent', a); r.setProperty('--ring', `rgba(${hexRgb(a).join(',')},${dunkel ? 0.35 : 0.3})`);
+    } else { r.removeProperty('--accent'); r.removeProperty('--ring'); }
+    r.setProperty('--spalte', { schmal: '250px', normal: '310px', breit: '400px' }[design.breite] || '310px');
+    document.body.classList.toggle('dichte-kompakt', design.dichte === 'kompakt');
+    document.body.classList.toggle('dichte-luftig', design.dichte === 'luftig');
+  }
   function applyTheme() {
     if (theme === 'auto') document.documentElement.removeAttribute('data-theme');
     else document.documentElement.setAttribute('data-theme', theme);
     const b = $('#theme'); b.innerHTML = themeIcons[theme]; b.title = T.darstellung + ': ' + themeNames[theme] + (theme === 'auto' ? ' (' + themeNames[systemTheme()] + ')' : '');
+    applyDesign();
   }
   // Jeder Klick wechselt sichtbar zwischen Hell und Dunkel; entspricht das Ergebnis dem System, folgt die Seite wieder automatisch
   const systemTheme = () => (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
@@ -441,12 +567,56 @@ const DATA = /*__DATEN__*/null;
     $('#toast').classList.remove('on'); clearTimeout(toastTimer);
   });
 
+  /* ---------- Eigene Themen & Zuordnung (pro Browser gespeichert, übersteht den Neuaufbau) ---------- */
+  // zuordnung: Link-Schlüssel → Thema · domainRegeln: Host → Thema · Thema = deutscher Name eines Standardthemas oder „eigen:…“
+  let zuordnung = store.get('zuordnung', {}), domainRegeln = store.get('domainRegeln', {});
+  let eigeneThemen = store.get('eigeneThemen', []), themenNamen = store.get('themenNamen', {}), reihenfolge = store.get('reihenfolge', []);
+  const themenSpeichern = () => {
+    store.set('zuordnung', zuordnung); store.set('domainRegeln', domainRegeln);
+    store.set('eigeneThemen', eigeneThemen); store.set('themenNamen', themenNamen); store.set('reihenfolge', reihenfolge);
+  };
+  const ORIG = new Map(); for (const k of D.kategorien) for (const it of k.items) if (!ORIG.has(it.k)) ORIG.set(it.k, k.name);
+  const themaGibts = key => D.kategorien.some(k => k.name === key) || eigeneThemen.some(t => t.key === key);
+  function alleThemen() {   // [{key, name, icon, eigen}] in Anzeigereihenfolge
+    const liste = D.kategorien.map(k => ({ key: k.name, name: themenNamen[k.name] || kName(k), icon: k.icon || '•', eigen: false }))
+      .concat(eigeneThemen.map(t => ({ key: t.key, name: t.name, icon: t.icon || '📌', eigen: true })));
+    const pos = k => { const i = reihenfolge.indexOf(k); return i < 0 ? 1e6 : i; };
+    return liste.map((t, i) => Object.assign(t, { i })).sort((a, b) => (pos(a.key) - pos(b.key)) || (a.i - b.i));
+  }
+  const themaName = key => (alleThemen().find(t => t.key === key) || { name: key }).name;
+  function domainRegel(h) {   // genaueste Regel gewinnt: next.troodle.de vor troodle.de
+    const teile = String(h || '').split('.');
+    for (let i = 0; i < teile.length - 1; i++) { const z = domainRegeln[teile.slice(i).join('.')]; if (z && themaGibts(z)) return z; }
+    return null;
+  }
+  const themaVon = it => { const z = zuordnung[it.k]; return z && themaGibts(z) ? z : (domainRegel(it.h) || ORIG.get(it.k)); };
+  function neuesThema(name) {
+    const key = 'eigen:' + Date.now().toString(36);
+    eigeneThemen.push({ key, name: name.trim().slice(0, 40), icon: '📌' });
+    return key;
+  }
+  function zuweisen(it, key, ganzeDomain) {
+    const vorher = JSON.stringify({ zuordnung, domainRegeln, eigeneThemen, reihenfolge });
+    if (ganzeDomain) {
+      domainRegeln[it.h] = key;
+      for (const k of Object.keys(zuordnung)) { const x = ITEMS.get(k); if (x && x.h === it.h) delete zuordnung[k]; }
+    } else if (key === (domainRegel(it.h) || ORIG.get(it.k))) delete zuordnung[it.k];
+    else zuordnung[it.k] = key;
+    themenSpeichern(); render();
+    const karte = [...grid.querySelectorAll('.card')].find(c => c.dataset.name === key);
+    if (karte) { karte.classList.add('flash'); setTimeout(() => karte.classList.remove('flash'), 900); }
+    toast(ganzeDomain ? T.domainVerschoben(it.h, themaName(key)) : T.verschoben(it.t, themaName(key)), () => {
+      ({ zuordnung, domainRegeln, eigeneThemen, reihenfolge } = JSON.parse(vorher)); themenSpeichern(); render();
+    });
+  }
+
   /* ---------- Aufbau ---------- */
   const quick = $('#quick'), grid = $('#grid'), chips = $('#chips');
   const zu = new Set(store.get('zu', []));
   const aktiv = new Set(store.get('filter', []));        // gefilterte Themen (gemerkt)
   const offen = new Set(store.get('offen', []));         // Themen mit "alle anzeigen" (gemerkt)
   let rows = [], cards = [];
+  const ICON_MOVE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H9l2 2h7.5A2.5 2.5 0 0 1 21 9.5v7a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 16.5z"/><path d="M9.5 13h6m-2.2-2.3L15.5 13l-2.2 2.3"/></svg>';
   const ICON_STAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9z"/></svg>';
 
   function render() {
@@ -465,32 +635,37 @@ const DATA = /*__DATEN__*/null;
       const g = new Map(items.map(it => [it.k, gewicht(it.k)]));
       return items.filter(it => g.get(it.k) >= HAEUFIG).sort((a, b) => g.get(b.k) - g.get(a.k)).concat(items.filter(it => g.get(it.k) < HAEUFIG));
     };
-    const kats = D.kategorien.map((k, i) => ({ k, i, items: vorn(k.items.filter(show)) })).filter(x => x.items.length);
+    const themenListe = alleThemen();
+    const gruppen = new Map(themenListe.map(t => [t.key, []]));
+    for (const k of D.kategorien) for (const it of k.items) if (show(it) && ORIG.get(it.k) === k.name) gruppen.get(themaVon(it)).push(it);
+    const alpha = (a, b) => a.t.localeCompare(b.t, LANG, { sensitivity: 'base' });
+    const kats = themenListe.map((t, i) => ({ k: t, i, items: vorn(gruppen.get(t.key).sort(alpha)) })).filter(x => x.items.length || x.k.eigen);
     if (!D.kategorien.length) {
       grid.innerHTML = `<div class="leer">${T.keine}</div>`;
-    } else if (!kats.length) {
+    } else if (!kats.some(x => x.items.length)) {
       grid.innerHTML = `<div class="leer">${T.alleVersteckt}</div>`;
     } else {
       grid.innerHTML = kats.map(({ k, i, items }) => {
         const links = items.map((it, j) => {
-          const s = (it.t + ' ' + it.h + ' ' + (it.o || '') + ' ' + k.name + ' ' + (k.name_en || '')).toLowerCase();
+          const s = (it.t + ' ' + it.h + ' ' + (it.o || '') + ' ' + k.name).toLowerCase();
           const on = obenKeys.has(it.k);
           return `<div class="row${j >= LIMIT ? ' x' : ''}" data-s="${esc(s)}"><a class="link" href="${esc(it.u)}" target="_blank" rel="noopener noreferrer" title="${esc(tip(it))}" data-k="${esc(it.k)}" data-t="${esc(it.t.toLowerCase())}" data-h="${esc(it.h)}">${fav(it)}<span class="lt"><span class="ti">${esc(it.t)}</span><span class="ho">${esc(it.h)}</span></span></a>` +
-            `<span class="acts"><button class="act${on ? ' on' : ''}" data-act="star" type="button" data-k="${esc(it.k)}" aria-pressed="${on}" title="${esc(on ? T.unpin : T.starAn)}" aria-label="${esc(on ? T.unpinAria(it.t) : T.starAnAria(it.t))}">${ICON_STAR}</button>` +
+            `<span class="acts"><button class="act" data-act="move" type="button" data-k="${esc(it.k)}" title="${esc(T.move)}" aria-label="${esc(T.moveAria(it.t))}" aria-haspopup="menu">${ICON_MOVE}</button>` +
+            `<button class="act${on ? ' on' : ''}" data-act="star" type="button" data-k="${esc(it.k)}" aria-pressed="${on}" title="${esc(on ? T.unpin : T.starAn)}" aria-label="${esc(on ? T.unpinAria(it.t) : T.starAnAria(it.t))}">${ICON_STAR}</button>` +
             `<button class="act" data-act="hide" type="button" data-k="${esc(it.k)}" title="${esc(T.hide)}" aria-label="${esc(T.hideAria(it.t))}">${ICON_X}</button></span></div>`;
         }).join('');
-        const rest = items.length - LIMIT, alle = offen.has(k.name);
+        const rest = items.length - LIMIT, alle = offen.has(k.key);
         const more = rest > 0 ? `<button class="more" type="button" data-n="${rest}">${alle ? T.weniger : T.mehr(rest)}</button>` : '';
-        return `<section class="card${zu.has(k.name) ? ' zu' : ''}${alle ? ' alle' : ''}" id="k${i}" data-name="${esc(k.name)}" style="--h:${hue(k.name)}">
-          <button class="ch" type="button" aria-expanded="${!zu.has(k.name)}"><span class="ci">${esc(k.icon || '•')}</span><h2>${esc(kName(k))}</h2><span class="cnt">${items.length}</span>${ICON_CHEV}</button>
-          <div class="links">${links}</div>${more}</section>`;
+        return `<section class="card${zu.has(k.key) ? ' zu' : ''}${alle ? ' alle' : ''}" id="k${i}" data-name="${esc(k.key)}" style="--h:${hue(k.key)}">
+          <button class="ch" type="button" aria-expanded="${!zu.has(k.key)}"><span class="ci">${esc(k.icon || '•')}</span><h2>${esc(k.name)}</h2><span class="cnt">${items.length}</span>${ICON_CHEV}</button>
+          <div class="links">${links || `<div class="leerkarte">${esc(T.leerKarte)}</div>`}</div>${more}</section>`;
       }).join('');
     }
-    for (const name of [...aktiv]) if (!kats.some(x => x.k.name === name)) aktiv.delete(name);
+    for (const name of [...aktiv]) if (!kats.some(x => x.k.key === name)) aktiv.delete(name);
     chips.innerHTML = `<button class="chip" type="button" data-alle title="${esc(T.alleTitel)}">${esc(T.alle)}<span class="n">${kats.reduce((s, x) => s + x.items.length, 0)}</span></button>` +
       kats.map(({ k, items }) =>
-        `<button class="chip" type="button" data-name="${esc(k.name)}" title="${esc(T.themaTitel)}"><span>${esc(k.icon || '')}</span>${esc(kName(k))}<span class="n">${items.length}</span></button>`).join('');
-    chips.hidden = !kats.length;
+        `<button class="chip" type="button" data-name="${esc(k.key)}" title="${esc(T.themaTitel)}"><span>${esc(k.icon || '')}</span>${esc(k.name)}<span class="n">${items.length}</span></button>`).join('');
+    chips.hidden = !kats.some(x => x.items.length);
     chipsAktualisieren();
 
     rows = [...grid.querySelectorAll('.row')];
@@ -499,6 +674,7 @@ const DATA = /*__DATEN__*/null;
     $('#hbar').hidden = !versteckt.length;
     $('#hbtn').innerHTML = ICON_EYE + esc(T.verwalten(versteckt.length));
     if ($('#dlg').open) renderDialog();
+    if ($('#einst').open) renderEinst();
     filter();
   }
   let sichtbar = D.gesamt;
@@ -509,6 +685,7 @@ const DATA = /*__DATEN__*/null;
     if (!b) return;
     e.preventDefault();
     const it = finde(b.dataset.k); if (!it) return;
+    if (b.dataset.act === 'move') { menu.hidden || menuIt !== it ? oeffneMenu(b, it) : menuZu(); return; }
     if (b.dataset.act === 'hide') ausblenden(it);
     else if (b.dataset.act === 'unpin') vonOben(it);
     else if (b.dataset.act === 'star') istOben(it.k) ? vonOben(it) : nachOben(it);
@@ -633,7 +810,8 @@ const DATA = /*__DATEN__*/null;
 
   const sichtbareLinks = () => [...grid.querySelectorAll('.link')].filter(a => a.offsetParent);
   document.addEventListener('keydown', e => {
-    if (dlg.open || e.target === q || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.key === 'Escape' && !menu.hidden) { menuZu(); return; }
+    if (dlg.open || $('#einst').open || e.target === q || (e.target.matches && e.target.matches('input, textarea, select')) || e.ctrlKey || e.metaKey || e.altKey) return;
     if (e.key === '/') { e.preventDefault(); q.focus(); return; }
     const link = e.target.closest && e.target.closest('.link');
     if (link && (e.key === 'Delete' || e.key === 'Backspace')) {
@@ -652,6 +830,198 @@ const DATA = /*__DATEN__*/null;
       return;
     }
     if (e.key.length === 1 && /\S/.test(e.key) && !(e.target.closest && e.target.closest('button'))) q.focus();
+  });
+
+  /* ---------- Menü „Zuordnen zu“ ---------- */
+  const menu = $('#menu');
+  let menuIt = null, menuKnopf = null;
+  function menuZu() { menu.hidden = true; menuIt = null; if (menuKnopf && document.contains(menuKnopf)) menuKnopf.focus(); menuKnopf = null; }
+  function oeffneMenu(knopf, it) {
+    menuIt = it; menuKnopf = knopf;
+    const akt = themaVon(it);
+    menu.innerHTML = `<div class="mh">${esc(T.verschiebenNach)}</div>` +
+      alleThemen().map(t => `<button class="mi${t.key === akt ? ' akt' : ''}" type="button" role="menuitem" data-ziel="${esc(t.key)}"><span>${esc(t.icon)}</span>${esc(t.name)}${t.key === akt ? ' ✓' : ''}</button>`).join('') +
+      `<div class="neu"><input class="feld" id="menu-neu" type="text" maxlength="40" placeholder="${esc(T.neuesThemaPh)}"><button class="btn small" type="button" data-neu>${esc(T.anlegen)}</button></div>` +
+      `<label class="mo"><input type="checkbox" id="menu-dom"${domainRegeln[it.h] ? ' checked' : ''}><span>${T.alleVonDomain(esc(it.h))}</span></label>`;
+    menu.hidden = false;
+    const r = knopf.getBoundingClientRect(), w = menu.offsetWidth, h = menu.offsetHeight;
+    // neben den Knopf (links davon), damit die Zeile sichtbar bleibt; sonst darunter
+    const links = r.left - w - 8;
+    menu.style.left = (links >= 12 ? links : Math.max(12, Math.min(r.right - w, innerWidth - w - 12))) + 'px';
+    menu.style.top = (links >= 12 ? Math.max(12, Math.min(r.top - 8, innerHeight - h - 12)) : Math.max(12, Math.min(r.bottom + 6, innerHeight - h - 12))) + 'px';
+    const aktiv1 = menu.querySelector('.mi.akt') || menu.querySelector('.mi');
+    menu.scrollTop = Math.max(0, aktiv1.offsetTop - 40);
+    aktiv1.focus({ preventScroll: true });
+  }
+  const menuNeu = () => {
+    const f = $('#menu-neu'), name = f.value.trim(); if (!name) { f.focus(); return; }
+    const it = menuIt, dom = $('#menu-dom').checked, key = neuesThema(name);
+    menu.hidden = true; zuweisen(it, key, dom);
+  };
+  menu.addEventListener('click', e => {
+    const z = e.target.closest('[data-ziel]');
+    if (z) { const it = menuIt, dom = $('#menu-dom').checked; menu.hidden = true; zuweisen(it, z.dataset.ziel, dom); return; }
+    if (e.target.closest('[data-neu]')) menuNeu();
+  });
+  menu.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && e.target.id === 'menu-neu') { e.preventDefault(); menuNeu(); }
+    else if (e.key === 'Escape') { e.preventDefault(); menuZu(); }
+    else if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && e.target.classList.contains('mi')) {
+      e.preventDefault(); const m = [...menu.querySelectorAll('.mi')], i = m.indexOf(e.target);
+      (m[i + (e.key === 'ArrowDown' ? 1 : -1)] || (e.key === 'ArrowDown' ? $('#menu-neu') : m[0])).focus();
+    }
+  });
+  document.addEventListener('mousedown', e => { if (!menu.hidden && !menu.contains(e.target) && !e.target.closest('[data-act="move"]')) menuZu(); });
+  window.addEventListener('resize', () => { if (!menu.hidden) menuZu(); });
+  document.addEventListener('scroll', e => { if (!menu.hidden && !menu.contains(e.target)) menuZu(); }, true);
+
+  /* ---------- Ziehen & Ablegen auf eine Karte oder einen Themen-Chip ---------- */
+  let ziehK = null;
+  const ablage = e => ziehK && e.target.closest && e.target.closest('.card[data-name], .chip[data-name]');
+  const ablageWeg = () => document.querySelectorAll('.drop').forEach(x => x.classList.remove('drop'));
+  document.addEventListener('dragstart', e => {
+    const r = e.target.closest && e.target.closest('.row'); if (!r) return;
+    ziehK = r.querySelector('.link').dataset.k; menuZu();
+    try { e.dataTransfer.effectAllowed = 'copyMove'; e.dataTransfer.setData('application/x-startseite', ziehK); } catch (_) { }
+  });
+  document.addEventListener('dragend', () => { ziehK = null; ablageWeg(); });
+  document.addEventListener('dragover', e => {
+    const z = ablage(e); if (!z) return;
+    e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+    if (!z.classList.contains('drop')) { ablageWeg(); z.classList.add('drop'); }
+  });
+  document.addEventListener('dragleave', e => { const z = ablage(e); if (z && !z.contains(e.relatedTarget)) z.classList.remove('drop'); });
+  document.addEventListener('drop', e => {
+    const z = ablage(e); if (!z) return;
+    e.preventDefault(); ablageWeg();
+    const it = ITEMS.get(ziehK), key = z.dataset.name; ziehK = null;
+    if (it && key && key !== themaVon(it)) zuweisen(it, key, false);
+  });
+
+  /* ---------- Einstellungen: Themen · Darstellung · Übertragen ---------- */
+  const einst = $('#einst'), einstB = $('#einst-b');
+  let einstTab = 'themen';
+  const SPEICHER = ['theme', 'zu', 'filter', 'offen', 'versteckt', 'favoriten', 'ausLeiste', 'nutzung', 'zuordnung', 'domainRegeln', 'eigeneThemen', 'themenNamen', 'reihenfolge', 'design'];
+  const seg = (name, wert, optionen) => `<span class="seg" data-seg="${name}">` +
+    optionen.map(([w, txt]) => `<button type="button" data-wert="${w}" class="${w === wert ? 'on' : ''}">${esc(txt)}</button>`).join('') + '</span>';
+  function renderEinst() {
+    document.querySelectorAll('#einst .tab').forEach(t => t.classList.toggle('on', t.dataset.tab === einstTab));
+    if (einstTab === 'themen') {
+      const anzahl = new Map(); for (const it of ITEMS.values()) if (ORIG.has(it.k)) { const k = themaVon(it); anzahl.set(k, (anzahl.get(k) || 0) + 1); }
+      const liste = alleThemen();
+      const original = new Map(D.kategorien.map(k => [k.name, kName(k)]));
+      einstB.innerHTML = `<p class="txt">${esc(T.themenText)}</p>` +
+        liste.map((t, i) => `<div class="trow" data-key="${esc(t.key)}">` +
+          (t.eigen ? `<input class="feld ic" data-feld="icon" maxlength="4" value="${esc(t.icon)}" aria-label="Symbol">` : `<span class="ic">${esc(t.icon)}</span>`) +
+          `<input class="feld" data-feld="name" maxlength="40" value="${esc(t.name)}" aria-label="Name">` +
+          `<span class="anz">${anzahl.get(t.key) || 0}</span>` +
+          `<button class="mini" type="button" data-tu="hoch" title="${esc(T.hoch)}" ${i ? '' : 'disabled'}>↑</button>` +
+          `<button class="mini" type="button" data-tu="runter" title="${esc(T.runter)}" ${i < liste.length - 1 ? '' : 'disabled'}>↓</button>` +
+          (t.eigen ? `<button class="mini weg" type="button" data-tu="loeschen" title="${esc(T.loeschen)}">✕</button>`
+            : `<button class="mini" type="button" data-tu="name-zurueck" title="${esc(T.zuruecksetzenName)}" ${themenNamen[t.key] ? '' : 'disabled'}>↺</button>`) +
+          `</div>`).join('') +
+        `<div class="trow"><span class="ic">＋</span><input class="feld" id="einst-neu" maxlength="40" placeholder="${esc(T.neuesThemaPh)}"><button class="btn small" type="button" data-tu="neu">${esc(T.anlegen)}</button></div>` +
+        `<h3>${esc(T.regeln)}</h3>` +
+        (Object.keys(domainRegeln).length ? Object.keys(domainRegeln).sort().map(d => `<div class="regel" data-domain="${esc(d)}"><code>${esc(d)}</code><span class="pfeil">→</span><span class="z">${esc(themaName(domainRegeln[d]))}</span><button class="mini weg" type="button" data-tu="regel-weg" title="${esc(T.regelWeg)}">✕</button></div>`).join('')
+          : `<p class="txt">${esc(T.keineRegeln)}</p>`) +
+        `<div class="knoepfe"><button class="btn small" type="button" data-tu="zuordnung-reset">${esc(T.zuordnungReset)}</button></div>`;
+      void original;
+    } else if (einstTab === 'design') {
+      const eigene = design.akzent && !FARBEN.includes(design.akzent.toLowerCase());
+      einstB.innerHTML =
+        `<h3>${esc(T.akzent)}</h3><div class="zeile"><div class="farben">` +
+        FARBEN.map((f, i) => `<button class="farbe${(design.akzent ? design.akzent.toLowerCase() === f : i === 0) ? ' on' : ''}" type="button" data-farbe="${i ? f : ''}" style="background:${f}" aria-label="${f}"></button>`).join('') +
+        `<input type="color" id="einst-farbe" value="${eigene ? design.akzent : '#4f5fe8'}" title="${esc(T.eigeneFarbe)}" aria-label="${esc(T.eigeneFarbe)}"></div></div>` +
+        `<h3>${esc(T.darstellung)}</h3>` +
+        `<div class="zeile"><span class="lab">${esc(T.modus)}</span>${seg('theme', theme, [['auto', T.themes.auto], ['light', T.themes.light], ['dark', T.themes.dark]])}</div>` +
+        `<div class="zeile"><span class="lab">${esc(T.dichte)}</span>${seg('dichte', design.dichte, [['kompakt', T.kompakt], ['normal', T.normal], ['luftig', T.luftig]])}</div>` +
+        `<div class="zeile"><span class="lab">${esc(T.breite)}</span>${seg('breite', design.breite, [['schmal', T.schmal], ['normal', T.normal], ['breit', T.breitW]])}</div>` +
+        `<div class="knoepfe" style="margin-top:12px"><button class="btn small" type="button" data-tu="design-reset">${esc(T.designReset)}</button></div>`;
+    } else {
+      einstB.innerHTML = `<p class="txt">${esc(T.datenText)}</p>` +
+        `<div class="knoepfe"><button class="btn primary" type="button" data-tu="export">${esc(T.exportieren)}</button><button class="btn" type="button" data-tu="import">${esc(T.importieren)}</button></div>` +
+        `<h3>${esc(T.allesReset)}</h3><div class="knoepfe"><button class="btn small" type="button" data-tu="alles-reset">${esc(T.allesReset)}</button></div>`;
+    }
+  }
+  const designSpeichern = () => { store.set('design', design); applyDesign(); renderEinst(); };
+  $('#einst-btn').addEventListener('click', () => { menuZu(); renderEinst(); einst.showModal(); });
+  $('#einst-x').addEventListener('click', () => einst.close());
+  einst.addEventListener('click', e => { if (e.target === einst) einst.close(); });
+  document.querySelector('#einst .tabs').addEventListener('click', e => { const t = e.target.closest('.tab'); if (t) { einstTab = t.dataset.tab; renderEinst(); } });
+  einstB.addEventListener('change', e => {
+    const f = e.target, zeile = f.closest('.trow[data-key]');
+    if (f.id === 'einst-farbe') { design.akzent = f.value; designSpeichern(); return; }
+    if (!zeile) return;
+    const key = zeile.dataset.key, wert = f.value.trim(), eigen = eigeneThemen.find(t => t.key === key);
+    if (f.dataset.feld === 'name') {
+      if (eigen) { if (wert) eigen.name = wert.slice(0, 40); }
+      else { const orig = kName(D.kategorien.find(k => k.name === key)); if (!wert || wert === orig) delete themenNamen[key]; else themenNamen[key] = wert.slice(0, 40); }
+    } else if (f.dataset.feld === 'icon' && eigen) eigen.icon = wert || '📌';
+    themenSpeichern(); render();
+  });
+  einstB.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && e.target.id === 'einst-neu') { e.preventDefault(); einstB.querySelector('[data-tu="neu"]').click(); }
+    else if (e.key === 'Enter' && e.target.matches('input.feld')) { e.preventDefault(); e.target.blur(); }
+  });
+  einstB.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.farbe !== undefined) { design.akzent = b.dataset.farbe; designSpeichern(); return; }
+    const sg = b.closest('[data-seg]');
+    if (sg) {
+      const w = b.dataset.wert;
+      if (sg.dataset.seg === 'theme') { theme = w; store.set('theme', theme); applyTheme(); renderEinst(); }
+      else { design[sg.dataset.seg] = w; designSpeichern(); }
+      return;
+    }
+    const tu = b.dataset.tu, zeile = b.closest('[data-key]'), key = zeile && zeile.dataset.key;
+    if (tu === 'hoch' || tu === 'runter') {
+      const keys = alleThemen().map(t => t.key), i = keys.indexOf(key), j = i + (tu === 'hoch' ? -1 : 1);
+      if (j < 0 || j >= keys.length) return;
+      [keys[i], keys[j]] = [keys[j], keys[i]]; reihenfolge = keys;
+    } else if (tu === 'name-zurueck') delete themenNamen[key];
+    else if (tu === 'loeschen') {
+      if (!confirm(T.loeschenFrage(themaName(key)))) return;
+      eigeneThemen = eigeneThemen.filter(t => t.key !== key);
+      for (const k of Object.keys(zuordnung)) if (zuordnung[k] === key) delete zuordnung[k];
+      for (const d of Object.keys(domainRegeln)) if (domainRegeln[d] === key) delete domainRegeln[d];
+      reihenfolge = reihenfolge.filter(k => k !== key);
+    } else if (tu === 'neu') {
+      const f = $('#einst-neu'); if (!f.value.trim()) { f.focus(); return; }
+      neuesThema(f.value);
+    } else if (tu === 'regel-weg') delete domainRegeln[b.closest('[data-domain]').dataset.domain];
+    else if (tu === 'zuordnung-reset') { if (!confirm(T.zuordnungResetFrage)) return; zuordnung = {}; domainRegeln = {}; }
+    else if (tu === 'design-reset') { design = { akzent: '', dichte: 'normal', breite: 'normal' }; designSpeichern(); return; }
+    else if (tu === 'export') { exportieren(); return; }
+    else if (tu === 'import') { $('#import').value = ''; $('#import').click(); return; }
+    else if (tu === 'alles-reset') {
+      if (!confirm(T.allesResetFrage)) return;
+      try { for (const k of SPEICHER) localStorage.removeItem('startseite.' + k); } catch (_) { }
+      location.reload(); return;
+    } else return;
+    themenSpeichern(); render(); renderEinst();
+    if (tu === 'neu') { const f = $('#einst-neu'); if (f) f.focus(); }
+  });
+
+  /* ---------- Übertragen: Export / Import als Datei ---------- */
+  function exportieren() {
+    const daten = {};
+    for (const k of SPEICHER) { const v = store.get(k, undefined); if (v !== undefined) daten[k] = v; }
+    const blob = new Blob([JSON.stringify({ app: 'startseite', version: 1, exportiert: new Date().toISOString(), daten }, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'startseite-einstellungen.json';
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    toast(T.exportiert);
+  }
+  $('#import').addEventListener('change', e => {
+    const datei = e.target.files && e.target.files[0]; if (!datei) return;
+    const r = new FileReader();
+    r.onload = () => {
+      let j = null; try { j = JSON.parse(r.result); } catch (_) { }
+      if (!j || j.app !== 'startseite' || !j.daten || typeof j.daten !== 'object') { alert(T.importFehler); return; }
+      if (!confirm(T.importFrage)) return;
+      for (const k of SPEICHER) { if (k in j.daten) store.set(k, j.daten[k]); else { try { localStorage.removeItem('startseite.' + k); } catch (_) { } } }
+      location.reload();
+    };
+    r.readAsText(datei);
   });
 
   render();

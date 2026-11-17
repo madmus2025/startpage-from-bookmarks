@@ -18,9 +18,12 @@ Windows & macOS, ohne Server, ohne Installation, ohne Cloud.
 - **Ausblenden** – × oder <kbd>Entf</kbd> blendet einen Link aus (mit *Rückgängig* und einer Liste zum Wiedereinblenden).
 - **Sofortsuche** – einfach lostippen; <kbd>Enter</kbd> öffnet den besten Treffer, <kbd>Strg</kbd>+<kbd>Enter</kbd> sucht im Web.
 - **Themen-Filter** – die Themen-Buttons sind Schalter und lassen sich kombinieren.
+- **Eigene Themen** – ⇄ an jedem Link (oder einfach auf eine Karte bzw. einen Themen-Button ziehen) ordnet ihn einem anderen oder einem neuen eigenen Thema zu. Mit *Alle Links von …* wandert eine ganze Domain mit – auch künftige Lesezeichen. Umbenennen, Reihenfolge und Symbole unter ⚙ *Einstellungen → Themen*.
+- **Darstellung** – Akzentfarbe, Dichte (kompakt / normal / luftig) und Kartenbreite unter ⚙ *Einstellungen → Darstellung*.
+- **Einstellungen mitnehmen** – ⚙ *Einstellungen → Übertragen* exportiert Favoriten, Ausgeblendetes, Themen und Darstellung als Datei und importiert sie in einem anderen Browser oder auf einem anderen Rechner.
 - **Hell / Dunkel / Automatisch**, responsiv, jeder Link öffnet in einem neuen Tab.
 - **Deutsch & Englisch (US)** – richtet sich nach der Browsersprache; das Einrichtungsfenster nach der Systemsprache.
-- **Merkt sich alles** (Favoriten, Ausgeblendetes, Filter, eingeklappte Themen, Darstellung, Nutzung) pro Browser – bleibt beim automatischen Neuaufbau erhalten.
+- **Merkt sich alles** (Favoriten, Ausgeblendetes, Themen-Zuordnungen, eigene Themen, Darstellung, Filter, eingeklappte Themen, Nutzung) pro Browser – bleibt beim automatischen Neuaufbau erhalten.
 - **Privat** – alles bleibt auf dem Rechner. Nach außen gehen nur die Favicon-Abrufe, und die lassen sich abschalten.
 
 ## Installation
@@ -110,9 +113,11 @@ Sprache zum Testen erzwingen: `index.html?lang=en` bzw. `?lang=de`.
 4. Stichworte in Titel / Domain
 5. sonst *Sonstiges*
 
+Eigene Zuordnungen auf der Seite haben Vorrang: ein einzeln per ⇄ verschobener Link vor einer dort gesetzten Domain-Regel, diese vor den Regeln oben.
+
 ## Was sich die Startseite merkt
 
-Pro Rechner und Browser (lokal im Browser gespeichert, übersteht den Neuaufbau): Themen-Filter · eingeklappte Themen · „+ N weitere“ aufgeklappt · Hell/Dunkel · Favoriten · ausgeblendete Links · Klickzähler für „häufig genutzt“.
+Pro Rechner und Browser (lokal im Browser gespeichert, übersteht den Neuaufbau): Themen-Filter · eingeklappte Themen · „+ N weitere“ aufgeklappt · Hell/Dunkel · Favoriten · ausgeblendete Links · Klickzähler für „häufig genutzt“ · Themen-Zuordnungen, Domain-Regeln und eigene Themen · Akzentfarbe, Dichte, Kartenbreite. Mit ⚙ *Einstellungen → Übertragen* lässt sich alles in einen anderen Browser mitnehmen.
 Werden die Browserdaten inkl. Website-Daten gelöscht, ist alles wieder auf Standard.
 
 ## Bekannte Grenzen

@@ -18,9 +18,12 @@ Windows & macOS, no server, no install, no cloud.
 - **Hide links** – × or <kbd>Del</kbd> hides a link from the page (with *Undo* and a list to restore them).
 - **Instant search** – just start typing; <kbd>Enter</kbd> opens the best match, <kbd>Ctrl</kbd>+<kbd>Enter</kbd> searches the web.
 - **Topic filter** – topic buttons act as toggles and can be combined.
+- **Your own topics** – ⇄ on any link (or just drag it onto a card or topic button) assigns it to another topic or to a new one of your own. Tick *All links from …* to move a whole domain, including bookmarks added later. Rename, reorder and give icons to topics under ⚙ *Settings → Topics*.
+- **Appearance** – accent colour, density (compact / normal / airy) and card width under ⚙ *Settings → Appearance*.
+- **Take your settings along** – ⚙ *Settings → Transfer* exports pins, hidden links, topics and appearance as a file and imports them in another browser or on another computer.
 - **Light / dark / automatic**, responsive, every link opens in a new tab.
 - **German & English (US)** – follows the browser language; the setup dialog follows the system language.
-- **Remembers your choices** (pins, hidden links, filter, collapsed topics, theme, usage) per browser – they survive the automatic rebuild.
+- **Remembers your choices** (pins, hidden links, topic assignments, own topics, appearance, filter, collapsed topics, usage) per browser – they survive the automatic rebuild.
 - **Private** – everything stays on the computer. The only outbound requests are favicons, which can be switched off.
 
 ## Installation
@@ -109,6 +112,8 @@ Force a language for testing: `index.html?lang=en` or `?lang=de`.
 3. The user's own top-level bookmark folder (if it has at least 3 entries)
 4. Keywords in title / domain
 5. otherwise *Other*
+
+Your own assignments on the page come first: a single link moved via ⇄ beats a domain rule you set there, which beats the rules above.
 
 ## Known limitations
 
